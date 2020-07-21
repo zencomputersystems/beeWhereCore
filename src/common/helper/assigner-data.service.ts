@@ -73,9 +73,7 @@ export class AssignerDataService {
    * @memberof AssignerDataService
    */
   public processProfile([url, dbService, dataModel]: [string, AttendanceProfileDbService, any]) {
-    console.log('im here');
     return dbService.httpService.get(url).pipe(map(res => {
-      console.log(res.data.resource)
       if (res.status == 200) { return this.assignArrayData(res.data.resource, dataModel); }
     }));
   }

@@ -64,12 +64,10 @@ export class AttendanceProfileService {
 	 */
 	public getEmployeeAttendanceAttach([attendanceId, tenant_guid]: [string, string]) {
 		const filters = ['(ATTENDANCE_GUID=' + attendanceId + ')', 'AND (TENANT_GUID=' + tenant_guid + ')', 'AND (DELETED_AT IS NULL)'];
-		console.log(filters);
 		const fields = ['USER_GUID', 'FULLNAME', 'PERSONAL_ID_TYPE'];
 
 		const url = this.attendanceProfileDbService.queryService.generateDbQueryV3([this.userprofileDbService.tableDB, fields, filters, null, null, null, [], null]);
 
-		console.log(url);
 		return this.assignerDataService.processProfile([url, this.attendanceProfileDbService, AttendanceListDTO]);
 	}
 
@@ -82,7 +80,6 @@ export class AttendanceProfileService {
 	 */
 	public getAttendanceDetail(attendanceId: string) {
 		return this.findAll(attendanceId).pipe(map(res => {
-			console.log(res.data.resource);
 			if (res.status == 200) { return convertXMLToJson(res.data.resource[0].PROPERTIES_XML); }
 		}))
 	}
@@ -110,7 +107,6 @@ export class AttendanceProfileService {
 		modelData.DESCRIPTION = data.description;
 
 		resource.resource.push(modelData);
-		console.log(resource);
 
 		return this.attendanceProfileDbService.createByModel([resource, [], [], []]);
 	}
@@ -155,9 +151,6 @@ export class AttendanceProfileService {
 		let userList = this.assignerDataService.setBundleUserGuid(d);
 
 		resource.resource.push(data);
-
-		console.log(resource);
-		console.log(userList);
 
 		return this.userinfoDbService.updateByModel([resource, [], ['(USER_GUID IN (' + userList + '))'], []]);
 	}
