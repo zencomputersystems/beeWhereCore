@@ -1,4 +1,4 @@
-export class ProjectProfileModel {
+export class ClientProjectModel {
   PROJECT_GUID: string;
   CLIENT_GUID: string;
   NAME: string;

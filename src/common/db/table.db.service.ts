@@ -28,7 +28,7 @@ export class UsereLeaveDbService extends BaseDBService {
 
 
 /**
- * DB table : user main tenant : user_main
+ * DB table : user main tenant : a_client_profile
  *
  * @export
  * @class UsereLeaveDbService
@@ -52,14 +52,38 @@ export class ClientProfileDbService extends BaseDBService {
 }
 
 /**
- * DB table : user main tenant : user_main
+ * DB table : user main tenant : a_client_location
  *
  * @export
- * @class UsereLeaveDbService
+ * @class ClientLocationDbService
  * @extends {BaseDBService}
  */
 @Injectable()
-export class ProjectProfileDbService extends BaseDBService {
+export class ClientLocationDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof UsereLeaveDbService
+   */
+  public tableDB = 'a_client_location';
+  /**
+   *Creates an instance of ClientLocationDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof ClientLocationDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "a_client_location") }
+}
+
+/**
+ * DB table : user main tenant : a_project_profile
+ *
+ * @export
+ * @class ClientProjectDbService
+ * @extends {BaseDBService}
+ */
+@Injectable()
+export class ClientProjectDbService extends BaseDBService {
   /**
    * Declare table
    *
@@ -73,6 +97,30 @@ export class ProjectProfileDbService extends BaseDBService {
    * @memberof UserDbService
    */
   constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "a_project_profile") }
+}
+
+/**
+ * DB table : user main tenant : a_contract_profile
+ *
+ * @export
+ * @class ClientContractDbService
+ * @extends {BaseDBService}
+ */
+@Injectable()
+export class ClientContractDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof UsereLeaveDbService
+   */
+  public tableDB = 'a_contract_profile';
+  /**
+   *Creates an instance of UserDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof UserDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "a_contract_profile") }
 }
 
 /**
