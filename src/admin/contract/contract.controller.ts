@@ -2,8 +2,8 @@ import { Controller, UseGuards, Post, Body, Req, Res, Patch, Get, Param } from "
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBearerAuth, ApiOperation, ApiImplicitParam } from "@nestjs/swagger";
 import { ContractService } from "./Contract.service";
-import { CreateContractDTO } from "./dto/create-Contract.dto";
-import { UpdateContractDTO } from "./dto/update-Contract.dto";
+import { CreateContractDTO } from "./dto/create-contract.dto";
+import { UpdateContractDTO } from "./dto/update-contract.dto";
 
 @Controller('api/contract')
 @UseGuards(AuthGuard('jwt'))

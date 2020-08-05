@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { of } from "rxjs";
-import { CreateContractDTO } from './dto/create-Contract.dto';
+import { CreateContractDTO } from './dto/create-contract.dto';
 import { ClientContractDbService } from '../../common/db/table.db.service';
-import { ClientContractModel } from '../../common/model/client-Contract.model';
+import { ClientContractModel } from '../../common/model/client-contract.model';
 import { v1 } from "uuid";
 import { Resource } from "../../common/model/resource.model";
-import { UpdateContractDTO } from "./dto/update-Contract.dto";
+import { UpdateContractDTO } from "./dto/update-contract.dto";
 
 @Injectable()
 export class ContractService {
