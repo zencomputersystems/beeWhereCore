@@ -148,6 +148,30 @@ export class AttendanceProfileDbService extends BaseDBService {
 }
 
 /**
+ * DB table : user main tenant : a_clock_log
+ *
+ * @export
+ * @class ClockLogDbService
+ * @extends {BaseDBService}
+ */
+@Injectable()
+export class ClockLogDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof ClockLogDbService
+   */
+  public tableDB = 'a_clock_log';
+  /**
+   *Creates an instance of ClockLogDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof ClockLogDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "a_clock_log") }
+}
+
+/**
  * DB table : user main tenant : user_main
  *
  * @export
