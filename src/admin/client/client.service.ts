@@ -42,7 +42,6 @@ export class ClientService {
         const resource2 = new Resource(new Array);
         this.inputDataLocation([dataLocation, clientData, resource2, clientId]);
 
-        console.log(resource2);
         return this.clientLocationDbService.createByModel([resource2, [], [], []]);
       }), mergeMap(res => {
         const dataProject = new ClientProjectModel();
@@ -50,16 +49,12 @@ export class ClientService {
         const resource3 = new Resource(new Array);
         this.inputDataProject([dataProject, clientData, resource3, clientId]);
 
-        console.log(resource3);
-
         return this.clientProjectDbService.createByModel([resource3, [], [], []])
       }), mergeMap(res => {
         const dataContract = new ClientContractModel();
 
         const resource4 = new Resource(new Array);
         this.inputDataContract([dataContract, clientData, resource4, clientId]);
-
-        console.log(resource4);
 
         return this.clientContractDbService.createByModel([resource4, [], [], []])
       })
@@ -133,6 +128,18 @@ export class ClientService {
     });
 
     return resource4;
+  }
+
+  public getByCoordinate([lat, long]: [number, number]) {
+
+    const latMin = lat - 0.005;
+    const latMax = Number(lat) + Number(0.005);
+
+    const longMin = long - 0.005;
+    const longMax = Number(long) + Number(0.005);
+
+    let filter = [`(LATITUDE >= ${latMin})`, `AND (LATITUDE <= ${latMax})`, `AND (LONGITUDE >= ${longMin})`, `AND (LONGITUDE <= ${longMax})`];
+    return this.clientLocationDbService.findByFilterV4([[], filter, null, null, null, ['CLIENT_DATA'], null]);
   }
 
 }

@@ -1,5 +1,5 @@
-import { Controller, Post, Res, Patch, Get, UseGuards, Body, Req } from "@nestjs/common";
-import { ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { Controller, Post, Res, Patch, Get, UseGuards, Body, Req, Param } from "@nestjs/common";
+import { ApiOperation, ApiBearerAuth, ApiImplicitParam } from "@nestjs/swagger";
 import { ClientService } from './client.service';
 import { AuthGuard } from "@nestjs/passport";
 import { CreateClientDTO } from './dto/create-client.dto';
@@ -32,6 +32,17 @@ export class ClientController {
   @ApiOperation({ title: 'Get client', description: 'Get client' })
   findClient(@Res() res) {
     this.clientService.getClient().subscribe(
+      data => { res.send(data); },
+      err => { res.send(err) }
+    )
+  }
+
+  @Get('coordinate/:latitude/:longitude')
+  @ApiOperation({ title: 'Get client', description: 'Get client' })
+  @ApiImplicitParam({ name: 'latitude', description: 'Latitude', required: true })
+  @ApiImplicitParam({ name: 'longitude', description: 'Longitude', required: true })
+  getClientByCoordinates(@Param() params, @Res() res) {
+    this.clientService.getByCoordinate([params.latitude, params.longitude]).subscribe(
       data => { res.send(data); },
       err => { res.send(err) }
     )
