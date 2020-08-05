@@ -2,8 +2,8 @@ import { Controller, UseGuards, Post, Body, Req, Res, Patch, Get, Param } from "
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBearerAuth, ApiOperation, ApiImplicitParam } from "@nestjs/swagger";
 import { LocationService } from "./location.service";
-import { CreateLocationDTO } from "./dto/create-Location.dto";
-import { UpdateLocationDTO } from "./dto/update-Location.dto";
+import { CreateLocationDTO } from "./dto/create-location.dto";
+import { UpdateLocationDTO } from "./dto/update-location.dto";
 
 @Controller('api/location')
 @UseGuards(AuthGuard('jwt'))
