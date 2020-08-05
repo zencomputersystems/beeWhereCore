@@ -1,7 +1,7 @@
 import { Controller, UseGuards, Post, Body, Req, Res, Patch, Get, Param } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBearerAuth, ApiOperation, ApiImplicitParam } from "@nestjs/swagger";
-import { ContractService } from "./Contract.service";
+import { ContractService } from "./contract.service";
 import { CreateContractDTO } from "./dto/create-contract.dto";
 import { UpdateContractDTO } from "./dto/update-contract.dto";
 
