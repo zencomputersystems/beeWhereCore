@@ -4,6 +4,7 @@ import { ClientService } from './client.service';
 import { AuthGuard } from "@nestjs/passport";
 import { CreateClientDTO } from './dto/create-client.dto';
 import { UpdateClientDTO } from './dto/update-client.dto';
+import { type } from "os";
 
 @Controller('api/client')
 @UseGuards(AuthGuard('jwt'))
@@ -28,10 +29,11 @@ export class ClientController {
     )
   }
 
-  @Get()
+  @Get(':type')
   @ApiOperation({ title: 'Get client', description: 'Get client' })
-  findClient(@Res() res) {
-    this.clientService.getClient().subscribe(
+  @ApiImplicitParam({ name: 'type', description: 'simple or detail', enum: ['simple', 'detail'], required: true })
+  findClient(@Param('type') type, @Res() res) {
+    this.clientService.getClient([type]).subscribe(
       data => { res.send(data); },
       err => { res.send(err) }
     )

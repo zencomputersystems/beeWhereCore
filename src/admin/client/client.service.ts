@@ -7,7 +7,7 @@ import { v1 } from "uuid";
 import { ClientProfileDbService, ClientLocationDbService, ClientContractDbService, ClientProjectDbService } from '../../common/db/table.db.service';
 import { UpdateClientDTO } from "./dto/update-client.dto";
 import { ClientLocationModel } from "../../common/model/client-location.model";
-import { mergeMap } from "rxjs/operators";
+import { mergeMap, map } from "rxjs/operators";
 import { ClientProjectModel } from "../../common/model/client-project.model";
 import { ClientContractModel } from "../../common/model/client-contract.model";
 
@@ -73,7 +73,33 @@ export class ClientService {
     return this.clientProfileDbService.updateByModel([resource, [], [], []]);
   }
 
-  public getClient() {
+  public getClient([type]: [string]) {
+    let method;
+    if (type == 'detail') {
+      let url = this.clientProfileDbService.queryService.generateDbQueryV3(['a_client_profile', [], [], null, null, null, ['LOCATION_DATA', 'CONTRACT_DATA', 'PROJECT_DATA'], null]);
+
+      const projectFieldUrl = '&PROJECT_DATA.fields=PROJECT_GUID,NAME,SOC_NO,DESCRIPTION';
+      const locationFieldUrl = '&LOCATION_DATA.fields=LOCATION_GUID,LATITUDE,LONGITUDE,ADDRESS';
+      const contractFieldUrl = '&CONTRACT_DATA.fields=CONTRACT_GUID,NAME,CONTRACT_NO,DESCRIPTION';
+
+      url = url + projectFieldUrl + locationFieldUrl + contractFieldUrl
+
+      method = this.clientProfileDbService.httpService.get(url)
+        .pipe(
+          map(res => {
+            if (res.status == 200) {
+              return res.data.resource;
+            }
+          })
+        )
+
+    } else {
+      method = this.clientProfileDbService.findByFilterV4([[], [], null, null, null, [], null]);
+    }
+    return method;
+  }
+
+  public getClientDetail() {
     return this.clientProfileDbService.findByFilterV4([[], [], null, null, null, [], null]);
   }
 
