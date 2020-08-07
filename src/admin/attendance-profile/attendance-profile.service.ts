@@ -241,4 +241,13 @@ export class AttendanceProfileService {
 
 	}
 
+	public getAttendanceProfileByUserId([userId]: [string]) {
+		return this.userprofileDbService.findByFilterV4([['ATTENDANCE_GUID'], [`(USER_GUID=${userId})`], null, null, null, [], null]).pipe(
+			mergeMap(res => {
+				return this.attendanceProfileDbService.findByFilterV4([[], [`(ATTENDANCE_GUID=${res[0].ATTENDANCE_GUID})`], null, null, null, [], null]);
+			}), map(res => {
+				return convertXMLToJson(res[0].PROPERTIES_XML);
+			})
+		);
+	}
 }

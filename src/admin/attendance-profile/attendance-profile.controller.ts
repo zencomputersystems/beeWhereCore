@@ -149,4 +149,13 @@ export class AttendanceProfileController {
 		runUpdateService(this.attendanceProfileService.updateToEmployee([req.user, updateUserAttendanceDTO]), res);
 	}
 
+	@Get('user/:userId')
+	@ApiOperation({ title: 'Get attendance profile by user guid', description: 'Attendance profile details' })
+	@ApiImplicitParam({ name: 'userId', description: 'User guid', required: true })
+	getAttendanceDetails(@Param('userId') userId, @Res() res) {
+		this.attendanceProfileService.getAttendanceProfileByUserId([userId]).subscribe(
+			data => { res.send(data); },
+			err => { res.send(err); }
+		)
+	}
 }
