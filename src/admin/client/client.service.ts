@@ -76,7 +76,7 @@ export class ClientService {
   public getClient([type]: [string]) {
     let method;
     if (type == 'detail') {
-      let url = this.clientProfileDbService.queryService.generateDbQueryV3(['a_client_profile', [], [], null, null, null, ['LOCATION_DATA', 'CONTRACT_DATA', 'PROJECT_DATA'], null]);
+      let url = this.clientProfileDbService.queryService.generateDbQueryV3(['a_client_profile', ['CLIENT_GUID', 'NAME', 'ABBR'], [`(STATUS=1)`], null, null, null, ['LOCATION_DATA', 'CONTRACT_DATA', 'PROJECT_DATA'], null]);
 
       const projectFieldUrl = '&PROJECT_DATA.fields=PROJECT_GUID,NAME,SOC_NO,DESCRIPTION';
       const locationFieldUrl = '&LOCATION_DATA.fields=LOCATION_GUID,LATITUDE,LONGITUDE,ADDRESS';
@@ -94,13 +94,9 @@ export class ClientService {
         )
 
     } else {
-      method = this.clientProfileDbService.findByFilterV4([[], [], null, null, null, [], null]);
+      method = this.clientProfileDbService.findByFilterV4([['CLIENT_GUID', 'NAME', 'ABBR'], [`(STATUS=1)`], null, null, null, [], null]);
     }
     return method;
-  }
-
-  public getClientDetail() {
-    return this.clientProfileDbService.findByFilterV4([[], [], null, null, null, [], null]);
   }
 
   public inputDataClient([model, data]: [ClientProfileModel, UpdateClientDTO | CreateClientDTO]) {
@@ -168,4 +164,15 @@ export class ClientService {
     return this.clientLocationDbService.findByFilterV4([[], filter, null, null, null, ['CLIENT_DATA'], null]);
   }
 
+  public deleteClient([clientId]: [string]) {
+    const data = new ClientProfileModel
+
+    data.CLIENT_GUID = clientId;
+    data.STATUS = 0;
+
+    const resource = new Resource(new Array);
+    resource.resource.push(data);
+
+    return this.clientProfileDbService.updateByModel([resource, [], [], []]);
+  }
 }

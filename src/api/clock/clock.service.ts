@@ -7,6 +7,10 @@ import { v1 } from 'uuid';
 import { Resource } from "../../common/model/resource.model";
 import moment = require("moment");
 import { UpdateClockDTO } from "./dto/update-clock.dto";
+import { ActivityClockDTO } from "./dto/activity-clock.dto";
+import { map } from "rxjs/operators";
+/** XMLparser from zen library  */
+var { convertJsonToXML, convertXMLToJson } = require('@zencloudservices/xmlparser');
 
 @Injectable()
 export class ClockService {
@@ -40,5 +44,34 @@ export class ClockService {
     const resource = new Resource(new Array);
     resource.resource.push(model);
     return this.clockLogDbService.updateByModel([resource, [], [], []]);
+  }
+
+  public getClockData([clockId]: [string]) {
+    return this.clockLogDbService.findByFilterV4([[], [`(CLOCK_LOG_GUID=${clockId})`], null, null, null, [], null]);
+  }
+
+  public updateActivityProgress([activityClockDTO]: [ActivityClockDTO]) {
+    let model = new ClockLogModel;
+    model.CLOCK_LOG_GUID = activityClockDTO.clockLogGuid;
+    let root = {};
+    let activity = {};
+
+    activity['activity'] = activityClockDTO.activity;
+    root['root'] = { activity: activity['activity'] };
+
+    model.ACTIVITY = convertJsonToXML(root);
+
+    const resource = new Resource(new Array);
+    resource.resource.push(model);
+    return this.clockLogDbService.updateByModel([resource, [], [], []]);
+  }
+
+  public getActivityProgress([clockLogGuid]: [string]) {
+    return this.clockLogDbService.findByFilterV4([['ACTIVITY'], [`(CLOCK_LOG_GUID=${clockLogGuid})`], null, null, null, [], null]).pipe(
+      map(res => {
+        const activityData = convertXMLToJson(res[0].ACTIVITY);
+        return activityData.root;
+      })
+    )
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Res, Patch, Get, UseGuards, Body, Req, Param } from "@nestjs/common";
+import { Controller, Post, Res, Patch, Get, UseGuards, Body, Req, Param, Delete } from "@nestjs/common";
 import { ApiOperation, ApiBearerAuth, ApiImplicitParam } from "@nestjs/swagger";
 import { ClientService } from './client.service';
 import { AuthGuard } from "@nestjs/passport";
@@ -50,4 +50,13 @@ export class ClientController {
     )
   }
 
+  @Delete(':clientId')
+  @ApiOperation({ title: 'Delete client', description: 'Delete client' })
+  @ApiImplicitParam({ name: 'clientId', description: 'Client guid', required: true })
+  deleteClient(@Param('clientId') clientId, @Res() res) {
+    this.clientService.deleteClient([clientId]).subscribe(
+      data => { res.send(data.data.resource); },
+      err => { res.send(err) }
+    )
+  }
 }
