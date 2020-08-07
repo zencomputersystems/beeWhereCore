@@ -7,8 +7,8 @@ import { UpdateClockDTO } from "./dto/update-clock.dto";
 import { ActivityClockDTO } from "./dto/activity-clock.dto";
 
 @Controller('api/clock')
-@UseGuards(AuthGuard('jwt'))
-@ApiBearerAuth()
+// @UseGuards(AuthGuard('jwt'))
+// @ApiBearerAuth()
 export class ClockController {
   constructor(private readonly clockService: ClockService) { }
 
