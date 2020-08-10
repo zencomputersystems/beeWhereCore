@@ -8,6 +8,7 @@ import { ProjectModule } from './admin/project/project.module';
 import { LocationModule } from './admin/location/location.module';
 import { ContractModule } from './admin/contract/contract.module';
 import { ClockModule } from './api/clock/clock.module';
+import { UserInfoModule } from './api/user-info/user-info.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { ClockModule } from './api/clock/clock.module';
     ProjectModule,
     LocationModule,
     ContractModule,
-    ClockModule
+    ClockModule,
+    UserInfoModule
   ],
   controllers: [AppController],
   providers: [AppService],

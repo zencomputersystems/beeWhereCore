@@ -124,7 +124,7 @@ export class ClientContractDbService extends BaseDBService {
 }
 
 /**
- * DB table : user main tenant : user_main
+ * DB table : user_main
  *
  * @export
  * @class UsereLeaveDbService
@@ -148,7 +148,7 @@ export class AttendanceProfileDbService extends BaseDBService {
 }
 
 /**
- * DB table : user main tenant : a_clock_log
+ * DB table : a_clock_log
  *
  * @export
  * @class ClockLogDbService
@@ -172,7 +172,7 @@ export class ClockLogDbService extends BaseDBService {
 }
 
 /**
- * DB table : user main tenant : user_main
+ * DB table : user_main
  *
  * @export
  * @class UsereLeaveDbService
@@ -196,7 +196,7 @@ export class UserprofileDbService extends BaseDBService {
 }
 
 /**
- * DB table : user main tenant : user_main
+ * DB table : user_main
  *
  * @export
  * @class UsereLeaveDbService
@@ -217,4 +217,76 @@ export class UserinfoDbService extends BaseDBService {
    * @memberof UserDbService
    */
   constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "user_info") }
+}
+
+/**
+ * DB table : l_working_hours_profile
+ *
+ * @export
+ * @class WorkingHourDbService
+ * @extends {BaseDBService}
+ */
+@Injectable()
+export class WorkingHourDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof WorkingHourDbService
+   */
+  public tableDB = 'l_working_hours_profile';
+  /**
+   *Creates an instance of UserDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof WorkingHourDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "l_working_hours_profile") }
+}
+
+/**
+ * DB table : l_calendar_profile
+ *
+ * @export
+ * @class CalendarProfileDbService
+ * @extends {BaseDBService}
+ */
+@Injectable()
+export class CalendarProfileDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof CalendarProfile
+   */
+  public tableDB = 'l_calendar_profile';
+  /**
+   *Creates an instance of UserDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof CalendarProfile
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "l_calendar_profile") }
+}
+
+/**
+ * DB table : l_calendar_profile_details
+ *
+ * @export
+ * @class CalendarProfileDetailDbService
+ * @extends {BaseDBService}
+ */
+@Injectable()
+export class CalendarProfileDetailDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof CalendarProfileDetailDbService
+   */
+  public tableDB = 'l_calendar_profile_details';
+  /**
+   *Creates an instance of UserDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof CalendarProfileDetailDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "l_calendar_profile_details") }
 }

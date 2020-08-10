@@ -3,10 +3,6 @@ import { IsNotEmpty, IsString } from "class-validator";
 import { Type } from "class-transformer";
 
 export class DataDetailsDTO {
-  @ApiModelProperty({ description: 'Id', example: 'abc' })
-  @IsNotEmpty()
-  @IsString()
-  id: string;
   @ApiModelProperty({ description: 'Name', example: 'abc' })
   @IsNotEmpty()
   @IsString()
@@ -37,10 +33,6 @@ export class LocationDetailsDTO {
 }
 
 export class CreateClientDTO {
-  @ApiModelProperty({ description: 'Client id', example: 'abc' })
-  @IsNotEmpty()
-  @IsString()
-  id: string;
 
   @ApiModelProperty({ description: 'Client name', example: 'abc' })
   @IsNotEmpty()

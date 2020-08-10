@@ -92,7 +92,7 @@ export class BaseDBService {
   public findByFilterV4([fields, filters, order, limit, offset, relations, groups]: [string[], string[], string, number, number, string[], string]): Observable<Array<any>> {
     //url
     const url = this.queryService.generateDbQueryV3([this.tableName, fields, filters, order, limit, offset, relations, groups]);
-
+    // console.log(url);
     return this.httpService.get(url)
       .pipe(
         map(res => {
