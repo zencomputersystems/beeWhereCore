@@ -158,4 +158,14 @@ export class AttendanceProfileController {
 			err => { res.send(err); }
 		)
 	}
+
+	@Get('user')
+	@ApiOperation({ title: 'Get current logged user attendance profile by user guid', description: 'Attendance profile details for current logged user' })
+	getOwnAttendanceDetails(@Req() req, @Res() res) {
+		this.attendanceProfileService.getAttendanceProfileByUserId([req.user.USER_GUID]).subscribe(
+			data => { res.send(data); },
+			err => { res.send(err); }
+		)
+	}
+
 }

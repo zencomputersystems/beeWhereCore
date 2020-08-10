@@ -7,8 +7,8 @@ import { UpdateClockDTO } from "./dto/update-clock.dto";
 import { ActivityClockDTO } from "./dto/activity-clock.dto";
 
 @Controller('api/clock')
-// @UseGuards(AuthGuard('jwt'))
-// @ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 export class ClockController {
   constructor(private readonly clockService: ClockService) { }
 
@@ -59,11 +59,10 @@ export class ClockController {
     )
   }
 
-  @Get('history/:userId')
+  @Get('history')
   @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
-  @ApiImplicitParam({ name: 'userId', description: 'User guid', required: true })
-  findHistory(@Param('userId') userId, @Res() res) {
-    this.clockService.getHistoryClock([userId]).subscribe(
+  findHistory(@Req() req, @Res() res) {
+    this.clockService.getHistoryClock([req.user.USER_GUID]).subscribe(
       data => { res.send(data); },
       err => { res.send(err); }
     )
