@@ -8,25 +8,20 @@ export class UserInfoService {
   constructor(
     private readonly userprofileDbService: UserprofileDbService,
     private readonly workingHourDbService: WorkingHourDbService,
-    // private readonly calendarProfileDbService:CalendarProfileDbService,
     private readonly calendarProfileDetailDbService: CalendarProfileDetailDbService
   ) { }
   public getUserInfo([userId]) {
-    let calendarId;
     let calendarRestDay = [];
     let workingHourTime = [];
-    let usernameText, companyText, profilePictureText;
+    let profileData;
 
     return this.userprofileDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], null, null, null, [], null]).pipe(
       mergeMap(res => {
-        calendarId = res[0].CALENDAR_GUID;
-        usernameText = res[0].EMAIL;
-        companyText = res[0].COMPANY_NAME;
-        profilePictureText = res[0].PROFILE_PICTURE;
+        profileData = res[0];
         return this.workingHourDbService.findByFilterV4([[], [`(WORKING_HOURS_GUID=${res[0].WORKING_HOURS_GUID})`], null, null, null, [], null]);
       }), mergeMap(res => {
 
-        return this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID=${calendarId})`, `AND (YEAR=${new Date().getFullYear()})`], null, null, null, [], null]).pipe(
+        return this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID=${profileData.CALENDAR_GUID})`, `AND (YEAR=${new Date().getFullYear()})`], null, null, null, [], null]).pipe(
           map(res2 => {
             let workingHourData = convertXMLToJson(res[0].PROPERTIES_XML);
             let calendarData = convertXMLToJson(res2[0].PROPERTIES_XML);
@@ -40,9 +35,10 @@ export class UserInfoService {
       }), map(res => {
 
         let responseData = new ResultUserInfoDTO();
-        responseData.username = usernameText;
-        responseData.companyName = companyText;
-        responseData.profilePictureUrl = process.env.URL_STORAGE_ELEAVE + profilePictureText;
+        responseData.userId = profileData.USER_GUID;
+        responseData.email = profileData.EMAIL;
+        responseData.companyName = profileData.COMPANY_NAME;
+        responseData.profilePictureUrl = process.env.URL_STORAGE_ELEAVE + profileData.PROFILE_PICTURE;
 
         let workingHourTemp = new WorkingHourSettingDTO;
         workingHourTemp.start = workingHourTime['start_time'];

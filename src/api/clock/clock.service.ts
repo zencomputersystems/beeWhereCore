@@ -74,4 +74,22 @@ export class ClockService {
       })
     )
   }
+
+  public getHistoryClock([userId]: [string]) {
+
+    return this.clockLogDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], null, 20, null, [], null]).pipe(map(res => {
+      let resArr = [];
+      for (var i = 0; i < 15; i++) {
+        var startdate = moment().subtract(i, "days").format("YYYY-MM-DD");
+        let temp = res.filter(x => moment(x.CLOCK_IN_TIME).format("YYYY-MM-DD") === startdate);
+
+        let dataTemp = {};
+        dataTemp['date'] = startdate;
+        dataTemp['list'] = temp;
+        dataTemp['remarks'] = temp.length > 0 ? null : 'ABSENT';
+        resArr.push(dataTemp);
+      }
+      return resArr;
+    }));
+  }
 }

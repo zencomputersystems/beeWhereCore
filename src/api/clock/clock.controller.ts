@@ -59,4 +59,13 @@ export class ClockController {
     )
   }
 
+  @Get('history/:userId')
+  @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
+  @ApiImplicitParam({ name: 'userId', description: 'User guid', required: true })
+  findHistory(@Param('userId') userId, @Res() res) {
+    this.clockService.getHistoryClock([userId]).subscribe(
+      data => { res.send(data); },
+      err => { res.send(err); }
+    )
+  }
 }

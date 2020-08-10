@@ -13,7 +13,8 @@ export class ProfileSettingDetailDTO {
 }
 
 export class ResultUserInfoDTO {
-  username: string;
+  userId: string;
+  email: string;
   companyName: string;
   profilePictureUrl: string;
   profileSetting: ProfileSettingDetailDTO;
