@@ -9,7 +9,7 @@ import { UpdateLocationDTO } from "./dto/update-location.dto";
 
 @Injectable()
 export class LocationService {
-  constructor(private readonly clientLocationDbService: ClientLocationDbService) { }
+  constructor(public clientLocationDbService: ClientLocationDbService) { }
   public getAllLocation([req]: [any]) {
     return this.clientLocationDbService.findByFilterV4([[], [], null, null, null, [], null])
     // return of(data);

@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Body, Req, Res, Patch, Get, Param } from "@nestjs/common";
+import { Controller, UseGuards, Post, Body, Req, Res, Patch, Get, Param, HttpModule } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBearerAuth, ApiOperation, ApiImplicitParam } from "@nestjs/swagger";
 import { LocationService } from "./location.service";
@@ -47,4 +47,22 @@ export class LocationController {
     )
   }
 
+  @Get('search/:input')
+  @ApiOperation({ title: 'Get search Location', description: 'Get search Location' })
+  @ApiImplicitParam({ name: 'input' })
+  searchLocation(@Param('input') input, @Req() req, @Res() res) {
+
+    const headersRequestTemp = {
+      'X-Dreamfactory-API-Key': process.env.GOOGLE_API_DF_KEY || '36fda24fe5588fa4285ac6c6c2fdfbdb6b6bc9834699774c9bf777f706d05a88',
+    };
+
+    const hostGoogleDF = process.env.HOST_GOOGLE_API || `http://api.zen.com.my/api/v2/google`;
+    let method = hostGoogleDF + `/place/autocomplete/json?input=${input}`;
+    this.locationService.clientLocationDbService.httpService.get(method, { headers: headersRequestTemp }).subscribe(
+      data => {
+        res.send(data.data);
+      },
+      err => { res.send(err); }
+    );
+  }
 }
