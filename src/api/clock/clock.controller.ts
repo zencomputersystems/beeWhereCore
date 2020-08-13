@@ -59,7 +59,7 @@ export class ClockController {
     )
   }
 
-  @Get('history')
+  @Get('history/list')
   @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
   findHistory(@Req() req, @Res() res) {
     this.clockService.getHistoryClock([req.user.USER_GUID]).subscribe(
