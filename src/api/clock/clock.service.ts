@@ -82,12 +82,20 @@ export class ClockService {
       for (var i = 0; i < 15; i++) {
         var startdate = moment().subtract(i, "days").format("YYYY-MM-DD");
         let temp = res.filter(x => moment(x.CLOCK_IN_TIME).format("YYYY-MM-DD") === startdate);
+        if (temp.length > 0) {
+          let dataTemp = {};
+          dataTemp['date'] = startdate;
 
-        let dataTemp = {};
-        dataTemp['date'] = startdate;
-        dataTemp['list'] = temp;
-        dataTemp['remarks'] = temp.length > 0 ? null : 'ABSENT';
-        resArr.push(dataTemp);
+          temp.forEach(element => {
+            if (element.ACTIVITY != null) {
+              element.ACTIVITY = convertXMLToJson(element.ACTIVITY);
+            }
+          });
+
+          dataTemp['list'] = temp;
+
+          resArr.push(dataTemp);
+        }
       }
       return resArr;
     }));
