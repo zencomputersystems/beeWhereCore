@@ -47,7 +47,14 @@ export class ClockService {
   }
 
   public getClockData([clockId]: [string]) {
-    return this.clockLogDbService.findByFilterV4([[], [`(CLOCK_LOG_GUID=${clockId})`], null, null, null, [], null]);
+    return this.clockLogDbService.findByFilterV4([[], [`(CLOCK_LOG_GUID=${clockId})`], null, null, null, [], null]).pipe(
+      map(res => {
+        if (res[0].ACTIVITY != null) {
+          res[0].ACTIVITY = convertXMLToJson(res[0].ACTIVITY);
+        }
+        return res;
+      })
+    );
   }
 
   public updateActivityProgress([activityClockDTO]: [ActivityClockDTO]) {
