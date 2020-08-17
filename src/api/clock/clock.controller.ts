@@ -67,4 +67,16 @@ export class ClockController {
       err => { res.send(err); }
     )
   }
+
+  @Get('history/list/:limit/:page')
+  @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
+  @ApiImplicitParam({ name: 'limit', description: 'Quantity limit', required: true })
+  @ApiImplicitParam({ name: 'page', description: 'Offset page', required: true })
+  findHistoryByLimit(@Param() params, @Req() req, @Res() res) {
+    this.clockService.getHistoryClockByLimit([req.user.USER_GUID, params]).subscribe(
+      data => { res.send(data); },
+      err => { res.send(err); }
+    )
+  }
+
 }

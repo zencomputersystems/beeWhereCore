@@ -83,8 +83,8 @@ export class ClockService {
   }
 
   public getHistoryClock([userId]: [string]) {
-
-    return this.clockLogDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], null, 20, null, [], null]).pipe(map(res => {
+    let method = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], null, 20, null, [], null]);
+    return method.pipe(map(res => {
       let resArr = [];
       for (var i = 0; i < 15; i++) {
         var startdate = moment().subtract(i, "days").format("YYYY-MM-DD");
@@ -107,4 +107,18 @@ export class ClockService {
       return resArr;
     }));
   }
+
+  public getHistoryClockByLimit([userId, params]: [string, any]) {
+
+    let method = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], null, params.limit, params.page, [], null]);
+    return method.pipe(map(res => {
+      res.forEach(element => {
+        if (element.ACTIVITY != null) {
+          element.ACTIVITY = convertXMLToJson(element.ACTIVITY);
+        }
+      });
+      return res;
+    }));
+  }
+
 }
