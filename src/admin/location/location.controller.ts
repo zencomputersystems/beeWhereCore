@@ -65,4 +65,24 @@ export class LocationController {
       err => { res.send(err); }
     );
   }
+
+  @Get('search/coordinate/:input')
+  @ApiOperation({ title: 'Get search Location', description: 'Get search Location' })
+  @ApiImplicitParam({ name: 'input' })
+  searchLocationByLat(@Param('input') input, @Req() req, @Res() res) {
+
+    const headersRequestTemp = {
+      'X-Dreamfactory-API-Key': process.env.GOOGLE_API_DF_KEY || '36fda24fe5588fa4285ac6c6c2fdfbdb6b6bc9834699774c9bf777f706d05a88',
+    };
+
+    const hostGoogleDF = process.env.HOST_GOOGLE_API || `http://api.zen.com.my/api/v2/google`;
+    let method = hostGoogleDF + `/geocode/json?latlng=${input}`;
+    this.locationService.clientLocationDbService.httpService.get(method, { headers: headersRequestTemp }).subscribe(
+      data => {
+        res.send(data.data);
+      },
+      err => { res.send(err); }
+    );
+  }
+
 }
