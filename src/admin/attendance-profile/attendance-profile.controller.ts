@@ -41,7 +41,7 @@ export class AttendanceProfileController {
 	@Get('attendance-profile')
 	@ApiOperation({ title: 'Get attendance profile list' })
 	findAllAttendance(@Req() req, @Res() res) {
-		runGetServiceV2(this.attendanceProfileService.getAttendanceProfileList(req.user), res);
+		runGetServiceV2([this.attendanceProfileService.getAttendanceProfileList(req.user), res]);
 	}
 
 	/**
@@ -55,7 +55,7 @@ export class AttendanceProfileController {
 	@Post('attendance-profile')
 	@ApiOperation({ title: 'Setup new attendance profile' })
 	create(@Body() attendanceSetupDTO: AttendanceDTO, @Req() req, @Res() res) {
-		runCreateService(this.attendanceProfileService.create([req.user, attendanceSetupDTO]), res);
+		runCreateService([this.attendanceProfileService.create([req.user, attendanceSetupDTO]), res]);
 	}
 
 	/**
@@ -102,7 +102,7 @@ export class AttendanceProfileController {
 	@ApiOperation({ title: 'Delete attendance profile' })
 	@ApiImplicitParam({ name: 'id', description: 'Delete by ATTENDANCE_GUID', required: true })
 	deleteAttendanceProfile(@Param('id') id, @Req() req, @Res() res) {
-		runUpdateService(this.attendanceProfileService.deleteAttendance([req.user, id]), res);
+		runUpdateService([this.attendanceProfileService.deleteAttendance([req.user, id]), res]);
 	}
 
 	/**
@@ -117,7 +117,7 @@ export class AttendanceProfileController {
 	@ApiOperation({ title: 'Get employee list by attendance profile' })
 	@ApiImplicitParam({ name: 'id', description: 'Filter by ATTENDANCE_GUID', required: true })
 	findEmployeeAttendanceProfile(@Param('id') id, @Req() req, @Res() res) {
-		runGetServiceV2(this.attendanceProfileService.getEmployeeAttendanceAttach([id, req.user.TENANT_GUID]), res);
+		runGetServiceV2([this.attendanceProfileService.getEmployeeAttendanceAttach([id, req.user.TENANT_GUID]), res]);
 	}
 
 	/**
@@ -127,11 +127,11 @@ export class AttendanceProfileController {
 	 * @param {*} res
 	 * @memberof AttendanceProfileController
 	 */
-	@Get(':id')
+	@Get('attendance-profile/:id')
 	@ApiOperation({ title: 'Get attendance detail by attendance profile guid' })
 	@ApiImplicitParam({ name: 'id', description: 'Filter by ATTENDANCE_GUID', required: true })
 	findOne(@Param('id') id, @Res() res) {
-		runGetServiceV2(this.attendanceProfileService.getAttendanceDetail(id), res);
+		runGetServiceV2([this.attendanceProfileService.getAttendanceDetail(id), res]);
 	}
 
 	/**
@@ -146,26 +146,20 @@ export class AttendanceProfileController {
 	@Patch('user-attendance')
 	@ApiOperation({ title: 'Assign attendance profile to employee' })
 	updateToEmployee(@Body() updateUserAttendanceDTO: UpdateUserAttendanceDTO, @Req() req, @Res() res) {
-		runUpdateService(this.attendanceProfileService.updateToEmployee([req.user, updateUserAttendanceDTO]), res);
+		runUpdateService([this.attendanceProfileService.updateToEmployee([req.user, updateUserAttendanceDTO]), res]);
 	}
 
 	@Get('user/:userId')
 	@ApiOperation({ title: 'Get attendance profile by user guid', description: 'Attendance profile details' })
 	@ApiImplicitParam({ name: 'userId', description: 'User guid', required: true })
 	getAttendanceDetails(@Param('userId') userId, @Res() res) {
-		this.attendanceProfileService.getAttendanceProfileByUserId([userId]).subscribe(
-			data => { res.send(data); },
-			err => { res.send(err); }
-		)
+		runGetServiceV2([this.attendanceProfileService.getAttendanceProfileByUserId([userId]), res]);
 	}
 
 	@Get('user')
 	@ApiOperation({ title: 'Get current logged user attendance profile by user guid', description: 'Attendance profile details for current logged user' })
 	getOwnAttendanceDetails(@Req() req, @Res() res) {
-		this.attendanceProfileService.getAttendanceProfileByUserId([req.user.USER_GUID]).subscribe(
-			data => { res.send(data); },
-			err => { res.send(err); }
-		)
+		runGetServiceV2([this.attendanceProfileService.getAttendanceProfileByUserId([req.user.USER_GUID]), res]);
 	}
 
 }

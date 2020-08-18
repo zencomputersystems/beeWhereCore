@@ -4,6 +4,7 @@ import { ApiBearerAuth, ApiOperation, ApiImplicitParam } from "@nestjs/swagger";
 import { ContractService } from "./contract.service";
 import { CreateContractDTO } from "./dto/create-contract.dto";
 import { UpdateContractDTO } from "./dto/update-contract.dto";
+import { runGetServiceV2, runCreateService, runUpdateService } from '../../common/helper/basic-function.service';
 
 @Controller('api/contract')
 @UseGuards(AuthGuard('jwt'))
@@ -13,38 +14,26 @@ export class ContractController {
   @Post()
   @ApiOperation({ title: 'Add Contract to client', description: 'Add Contract to client' })
   createContract(@Body() createContractData: CreateContractDTO, @Req() req, @Res() res) {
-    this.ContractService.createContract([createContractData]).subscribe(
-      data => { res.send(data.data.resource); },
-      err => { res.send(err) }
-    )
+    runCreateService([this.ContractService.createContract([createContractData]), res]);
   }
 
   @Patch()
   @ApiOperation({ title: 'Update client Contract', description: 'Update client Contract' })
   updateContract(@Body() updateContractData: UpdateContractDTO, @Req() req, @Res() res) {
-    this.ContractService.updateContract([updateContractData]).subscribe(
-      data => { res.send(data.data.resource); },
-      err => { res.send(err) }
-    )
+    runUpdateService([this.ContractService.updateContract([updateContractData]), res]);
   }
 
   @Get()
   @ApiOperation({ title: 'Get all Contract', description: 'Get all Contract' })
   getAllContract(@Req() req, @Res() res) {
-    this.ContractService.getAllContract([req]).subscribe(
-      data => { res.send(data); },
-      err => { res.send(err) }
-    )
+    runGetServiceV2([this.ContractService.getAllContract([req]), res]);
   }
 
   @Get(':clientid')
   @ApiOperation({ title: 'Get client Contract', description: 'Get client Contract' })
   @ApiImplicitParam({ name: 'clientid' })
   createClient(@Param('clientid') clientId, @Req() req, @Res() res) {
-    this.ContractService.getOneContract([clientId]).subscribe(
-      data => { res.send(data); },
-      err => { res.send(err) }
-    )
+    runGetServiceV2([this.ContractService.getOneContract([clientId]), res]);
   }
 
 }

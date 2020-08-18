@@ -30,8 +30,8 @@ export function getModuleHttp() {
      * @param {*} res
      * @memberof CommonFunctionService
      */
-export function runCreateService(method, res) {
-  this.getResults([method, res, 'Fail to create resource']);
+export function runCreateService([method, res]) {
+  getResults([method, res, 'Fail to create resource']);
 }
 
 /**
@@ -41,8 +41,8 @@ export function runCreateService(method, res) {
  * @param {*} res
  * @memberof CommonFunctionService
  */
-export function runUpdateService(method, res) {
-  this.getResults([method, res, 'Fail to update resource']);
+export function runUpdateService([method, res]) {
+  getResults([method, res, 'Fail to update resource']);
 }
 
 /**
@@ -52,10 +52,10 @@ export function runUpdateService(method, res) {
  * @param {*} res
  * @memberof CommonFunctionService
  */
-export function runGetServiceV2(method, res) {
+export function runGetServiceV2([method, res]) {
   method.subscribe(
     data => { res.send(data); },
-    err => { this.sendResError('Fail to fetch resource', res); }
+    err => { sendResErrorV2([res, HttpStatus.BAD_REQUEST, 'Fail to fetch resource']); }
   );
 }
 
@@ -79,7 +79,7 @@ export function getResults([method, res, message]) {
     },
     err => {
       const response: { status: string } = { status: message };
-      this.sendResError(response, res);
+      sendResErrorV2([res, HttpStatus.BAD_REQUEST, response]);
     }
   );
 }
@@ -87,17 +87,17 @@ export function getResults([method, res, message]) {
 
 
 
-/**
- * failed response with code 400
- *
- * @param {*} message
- * @param {*} res
- * @memberof CommonFunctionService
- */
-export function sendResError(message, res) {
-  res.status(400);
-  res.send(message);
-}
+// /**
+//  * failed response with code 400
+//  *
+//  * @param {*} message
+//  * @param {*} res
+//  * @memberof CommonFunctionService
+//  */
+// export function sendResError([message, res]) {
+//   res.status(400);
+//   res.send(message);
+// }
 
 /**
  * Failed response with custom code
@@ -107,89 +107,89 @@ export function sendResError(message, res) {
  * @param {*} msg
  * @memberof CommonFunctionService
  */
-export function sendResErrorV2(res, code, msg) { //sendErrorV2
+export function sendResErrorV2([res, code, msg]) { //sendErrorV2
   res.status(code);
   res.send(msg);
 }
 
-/**
- * Failed response with checking response data
- *
- * @param {*} err
- * @param {*} res
- * @memberof CommonFunctionService
- */
-export function sendResErrorV3(err, res) { //sendError
-  // if (err.response.data) {
-  //     res.status(err.response.data.error.status_code);
-  //     res.send(err.response.data.error.message)
-  // } else {
-  //     res.status(500);
-  //     res.send(err);
-  // }
+// /**
+//  * Failed response with checking response data
+//  *
+//  * @param {*} err
+//  * @param {*} res
+//  * @memberof CommonFunctionService
+//  */
+// export function sendResErrorV3(err, res) { //sendError
+//   // if (err.response.data) {
+//   //     res.status(err.response.data.error.status_code);
+//   //     res.send(err.response.data.error.message)
+//   // } else {
+//   //     res.status(500);
+//   //     res.send(err);
+//   // }
 
-  res.status(HttpStatus.BAD_REQUEST).send(new BadRequestException('Input missing'));
-}
-
-
+//   res.status(HttpStatus.BAD_REQUEST).send(new BadRequestException('Input missing'));
+// }
 
 
-/**
- * Get list data
- *
- * @param {*} method
- * @returns
- * @memberof CommonFunctionService
- */
-export function getListData(method) {
-  return method.pipe(map(res => {
-    return this.getResData(res);
-  }))
-}
 
-/**
- * Get resource data
- *
- * @param {*} res
- * @returns
- * @memberof CommonFunctionService
- */
-export function getResData(res) {
-  if (res.status == 200) {
-    return res.data.resource;
-  }
-}
 
-/**
- * find all list refactor
- *
- * @param {*} fields
- * @param {*} tenantId
- * @param {*} queryService
- * @param {*} httpService
- * @param {*} tableName
- * @returns {Observable<any>}
- * @memberof CommonFunctionService
- */
-export function findAllList(data): Observable<any> {
-  let fields = data[0];
-  let tenantId = data[1];
-  let queryService = data[2];
-  let httpService = data[3];
-  let tableName = data[4];
+// /**
+//  * Get list data
+//  *
+//  * @param {*} method
+//  * @returns
+//  * @memberof CommonFunctionService
+//  */
+// export function getListData(method) {
+//   return method.pipe(map(res => {
+//     return getResData(res);
+//   }))
+// }
 
-  // const fields = ['BRANCH'];
-  let filters = ['(TENANT_GUID=' + tenantId + ')'];
+// /**
+//  * Get resource data
+//  *
+//  * @param {*} res
+//  * @returns
+//  * @memberof CommonFunctionService
+//  */
+// export function getResData(res) {
+//   if (res.status == 200) {
+//     return res.data.resource;
+//   }
+// }
 
-  if (tableName === 'tenant_company') { filters = ['(DELETED_AT IS NULL)'] }
+// /**
+//  * find all list refactor
+//  *
+//  * @param {*} fields
+//  * @param {*} tenantId
+//  * @param {*} queryService
+//  * @param {*} httpService
+//  * @param {*} tableName
+//  * @returns {Observable<any>}
+//  * @memberof CommonFunctionService
+//  */
+// export function findAllList(data): Observable<any> {
+//   let fields = data[0];
+//   let tenantId = data[1];
+//   let queryService = data[2];
+//   let httpService = data[3];
+//   let tableName = data[4];
 
-  //url
-  const url = queryService.generateDbQueryV2(tableName, fields, filters, []);
+//   // const fields = ['BRANCH'];
+//   let filters = ['(TENANT_GUID=' + tenantId + ')'];
 
-  //call DF to validate the user
-  return httpService.get(url);
+//   if (tableName === 'tenant_company') { filters = ['(DELETED_AT IS NULL)'] }
 
-}
+//   //url
+//   const url = queryService.generateDbQueryV2(tableName, fields, filters, []);
+
+//   //call DF to validate the user
+//   return httpService.get(url);
+
+// }
 
 /**
  * Refactor to get all data

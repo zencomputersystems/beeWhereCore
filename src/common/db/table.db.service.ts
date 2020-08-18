@@ -290,3 +290,27 @@ export class CalendarProfileDetailDbService extends BaseDBService {
    */
   constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "l_calendar_profile_details") }
 }
+
+/**
+ * DB table : s_log_ticket
+ *
+ * @export
+ * @class SupportTicketDbService
+ * @extends {BaseDBService}
+ */
+@Injectable()
+export class SupportTicketDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof SupportTicketDbService
+   */
+  public tableDB = 's_log_ticket';
+  /**
+   *Creates an instance of UserDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof SupportTicketDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "s_log_ticket") }
+}

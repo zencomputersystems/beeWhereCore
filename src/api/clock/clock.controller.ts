@@ -5,6 +5,7 @@ import { ClockService } from "./clock.service";
 import { CreateClockDTO } from "./dto/create-clock.dto";
 import { UpdateClockDTO } from "./dto/update-clock.dto";
 import { ActivityClockDTO } from "./dto/activity-clock.dto";
+import { runGetServiceV2, runCreateService, runUpdateService } from '../../common/helper/basic-function.service';
 
 @Controller('api/clock')
 @UseGuards(AuthGuard('jwt'))
@@ -15,57 +16,39 @@ export class ClockController {
   @Post()
   @ApiOperation({ title: 'Clock in', description: 'Clock in user' })
   clockIn(@Body() createClockDTO: CreateClockDTO, @Res() res) {
-    this.clockService.clockInProcess([createClockDTO]).subscribe(
-      data => { res.send(data.data.resource); },
-      err => { res.send(err); }
-    )
+    runCreateService([this.clockService.clockInProcess([createClockDTO]), res]);
   }
 
   @Patch()
   @ApiOperation({ title: 'Clock out', description: 'Clock out user' })
   clockOut(@Body() updateClockDTO: UpdateClockDTO, @Res() res) {
-    this.clockService.clockOutProcess([updateClockDTO]).subscribe(
-      data => { res.send(data.data.resource); },
-      err => { res.send(err); }
-    )
+    runUpdateService([this.clockService.clockOutProcess([updateClockDTO]), res]);
   }
 
   @Get(':clockId')
   @ApiOperation({ title: 'Get clock in info', description: 'Get clock in info' })
   @ApiImplicitParam({ name: 'clockId', description: 'Clock log guid', required: true })
   getClockIn(@Param('clockId') id, @Res() res) {
-    this.clockService.getClockData([id]).subscribe(
-      data => { res.send(data); },
-      err => { res.send(err); }
-    )
+    runGetServiceV2([this.clockService.getClockData([id]), res]);
   }
 
   @Patch('activity')
   @ApiOperation({ title: 'Update actitivy', description: 'Update activity' })
   updateActivity(@Body() activityClockDTO: ActivityClockDTO, @Res() res) {
-    this.clockService.updateActivityProgress([activityClockDTO]).subscribe(
-      data => { res.send(data.data.resource); },
-      err => { res.send(err); }
-    )
+    runUpdateService([this.clockService.updateActivityProgress([activityClockDTO]), res]);
   }
 
   @Get('activity/:clockId')
   @ApiOperation({ title: 'Get activity info', description: 'Get activity info' })
   @ApiImplicitParam({ name: 'clockId', description: 'Clock log guid', required: true })
   getActivityByClockId(@Param('clockId') clockId, @Res() res) {
-    this.clockService.getActivityProgress([clockId]).subscribe(
-      data => { res.send(data); },
-      err => { res.send(err); }
-    )
+    runGetServiceV2([this.clockService.getActivityProgress([clockId]), res]);
   }
 
   @Get('history/list')
   @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
   findHistory(@Req() req, @Res() res) {
-    this.clockService.getHistoryClock([req.user.USER_GUID]).subscribe(
-      data => { res.send(data); },
-      err => { res.send(err); }
-    )
+    runGetServiceV2([this.clockService.getHistoryClock([req.user.USER_GUID]), res]);
   }
 
   @Get('history/list/:limit/:page')
@@ -73,10 +56,7 @@ export class ClockController {
   @ApiImplicitParam({ name: 'limit', description: 'Quantity limit', required: true })
   @ApiImplicitParam({ name: 'page', description: 'Offset page', required: true })
   findHistoryByLimit(@Param() params, @Req() req, @Res() res) {
-    this.clockService.getHistoryClockByLimit([req.user.USER_GUID, params]).subscribe(
-      data => { res.send(data); },
-      err => { res.send(err); }
-    )
+    runGetServiceV2([this.clockService.getHistoryClockByLimit([req.user.USER_GUID, params]), res]);
   }
 
 }
