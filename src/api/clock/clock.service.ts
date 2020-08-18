@@ -110,7 +110,7 @@ export class ClockService {
 
   public getHistoryClockByLimit([userId, params]: [string, any]) {
 
-    let method = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], null, params.limit, params.page, ['PROJECT_DATA', 'CONTRACT_DATA'], null]);
+    let method = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], null, params.limit, params.page, ['PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
     return method.pipe(map(res => {
       res.forEach(element => {
         if (element.ACTIVITY != null) {
