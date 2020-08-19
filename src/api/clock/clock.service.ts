@@ -47,7 +47,7 @@ export class ClockService {
   }
 
   public getClockData([clockId]: [string]) {
-    return this.clockLogDbService.findByFilterV4([[], [`(CLOCK_LOG_GUID=${clockId})`], null, null, null, ['PROJECT_DATA', 'CONTRACT_DATA'], null]).pipe(
+    return this.clockLogDbService.findByFilterV4([[], [`(CLOCK_LOG_GUID=${clockId})`], null, null, null, ['PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]).pipe(
       map(res => {
         if (res[0].ACTIVITY != null) {
           res[0].ACTIVITY = convertXMLToJson(res[0].ACTIVITY);
@@ -82,31 +82,31 @@ export class ClockService {
     )
   }
 
-  public getHistoryClock([userId]: [string]) {
-    let method = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], null, 20, null, [], null]);
-    return method.pipe(map(res => {
-      let resArr = [];
-      for (var i = 0; i < 15; i++) {
-        var startdate = moment().subtract(i, "days").format("YYYY-MM-DD");
-        let temp = res.filter(x => moment(x.CLOCK_IN_TIME).format("YYYY-MM-DD") === startdate);
-        if (temp.length > 0) {
-          let dataTemp = {};
-          dataTemp['date'] = startdate;
+  // public getHistoryClock([userId]: [string]) {
+  //   let method = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], null, 20, null, [], null]);
+  //   return method.pipe(map(res => {
+  //     let resArr = [];
+  //     for (var i = 0; i < 15; i++) {
+  //       var startdate = moment().subtract(i, "days").format("YYYY-MM-DD");
+  //       let temp = res.filter(x => moment(x.CLOCK_IN_TIME).format("YYYY-MM-DD") === startdate);
+  //       if (temp.length > 0) {
+  //         let dataTemp = {};
+  //         dataTemp['date'] = startdate;
 
-          temp.forEach(element => {
-            if (element.ACTIVITY != null) {
-              element.ACTIVITY = convertXMLToJson(element.ACTIVITY);
-            }
-          });
+  //         temp.forEach(element => {
+  //           if (element.ACTIVITY != null) {
+  //             element.ACTIVITY = convertXMLToJson(element.ACTIVITY);
+  //           }
+  //         });
 
-          dataTemp['list'] = temp;
+  //         dataTemp['list'] = temp;
 
-          resArr.push(dataTemp);
-        }
-      }
-      return resArr;
-    }));
-  }
+  //         resArr.push(dataTemp);
+  //       }
+  //     }
+  //     return resArr;
+  //   }));
+  // }
 
   public getHistoryClockByLimit([userId, params]: [string, any]) {
 

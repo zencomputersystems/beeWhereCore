@@ -45,11 +45,11 @@ export class ClockController {
     runGetServiceV2([this.clockService.getActivityProgress([clockId]), res]);
   }
 
-  @Get('history/list')
-  @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
-  findHistory(@Req() req, @Res() res) {
-    runGetServiceV2([this.clockService.getHistoryClock([req.user.USER_GUID]), res]);
-  }
+  // @Get('history/list')
+  // @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
+  // findHistory(@Req() req, @Res() res) {
+  //   runGetServiceV2([this.clockService.getHistoryClock([req.user.USER_GUID]), res]);
+  // }
 
   @Get('history/list/:limit/:page')
   @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
