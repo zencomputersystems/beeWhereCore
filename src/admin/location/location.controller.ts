@@ -38,17 +38,22 @@ export class LocationController {
 
   @Get('search/:input')
   @ApiOperation({ title: 'Get search Location', description: 'Get search Location' })
-  @ApiImplicitParam({ name: 'input' })
+  @ApiImplicitParam({ name: 'input', description: 'Search input', required: true })
   searchLocation(@Param('input') input, @Req() req, @Res() res) {
     let method = `/place/autocomplete/json?input=${input}`;
     this.googleApiProcess([method, res]);
   }
 
-  @Get('search/coordinate/:input')
+  @Get('search/:type/:input')
   @ApiOperation({ title: 'Get search Location', description: 'Get search Location' })
-  @ApiImplicitParam({ name: 'input' })
-  searchLocationByLat(@Param('input') input, @Req() req, @Res() res) {
-    let method = `/geocode/json?latlng=${input}`;
+  @ApiImplicitParam({ name: 'type', description: 'Search by coordinate or address', enum: ['coordinate', 'address'], required: true })
+  @ApiImplicitParam({ name: 'input', description: 'Search input', required: true })
+  searchLocationByLat(@Param() params, @Req() req, @Res() res) {
+    let method;
+    if (params.type === 'coordinate')
+      method = `/geocode/json?latlng=${params.input}`;
+    else
+      method = `/geocode/json?address=${params.input}`;
     this.googleApiProcess([method, res]);
   }
 
