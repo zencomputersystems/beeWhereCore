@@ -10,6 +10,11 @@ import { ClientLocationModel } from "../../common/model/client-location.model";
 import { mergeMap, map } from "rxjs/operators";
 import { ClientProjectModel } from "../../common/model/client-project.model";
 import { ClientContractModel } from "../../common/model/client-contract.model";
+import { UpdateClientBundleDTO, PatchBundleDTO, PostBundleDTO } from './dto/update-bundle.dto';
+import { of } from "rxjs";
+import { ProjectService } from '../project/project.service';
+import { LocationService } from '../location/location.service';
+import { ContractService } from "../contract/contract.service";
 
 @Injectable()
 export class ClientService {
@@ -18,7 +23,10 @@ export class ClientService {
     private readonly clientProfileDbService: ClientProfileDbService,
     private readonly clientLocationDbService: ClientLocationDbService,
     private readonly clientContractDbService: ClientContractDbService,
-    private readonly clientProjectDbService: ClientProjectDbService
+    private readonly clientProjectDbService: ClientProjectDbService,
+    private readonly contractService: ContractService,
+    private readonly projectService: ProjectService,
+    private readonly locationService: LocationService
   ) { }
 
   public createClient([clientData, req]: [CreateClientDTO, UserMainModel]) {
@@ -71,6 +79,69 @@ export class ClientService {
     resource.resource.push(data);
 
     return this.clientProfileDbService.updateByModel([resource, [], [], []]);
+  }
+
+  public updateClientBundle([bundleClientData, req]: [UpdateClientBundleDTO, UserMainModel]) {
+    let patchData = bundleClientData.patch;
+    let postData = bundleClientData.post;
+
+    let patchResource = this.patchProcessBundle([patchData]);
+    let postResource = this.postProcessBundle([postData]);
+
+
+
+    return of(bundleClientData);
+
+    // const data = new ClientProfileModel
+
+    // data.CLIENT_GUID = editClientData.id;
+    // this.inputDataClient([data, editClientData]);
+
+    // const resource = new Resource(new Array);
+    // resource.resource.push(data);
+
+    // return this.clientProfileDbService.updateByModel([resource, [], [], []]);
+  }
+
+  private patchProcessBundle([patchData]: [PatchBundleDTO]) {
+    if (patchData.client.length > 0) {
+      patchData.client.forEach(element => {
+        this.updateClient([element, null]).subscribe();
+      });
+    }
+    if (patchData.contract.length > 0) {
+      patchData.contract.forEach(element => {
+        this.contractService.updateContract([element]).subscribe();
+      });
+    }
+    if (patchData.project.length > 0) {
+      patchData.project.forEach(element => {
+        this.projectService.updateProject([element]).subscribe();
+      })
+    }
+    if (patchData.location.length > 0) {
+      patchData.location.forEach(element => {
+        this.locationService.updateLocation([element]).subscribe();
+      });
+    }
+  }
+
+  private postProcessBundle([postData]: [PostBundleDTO]) {
+    if (postData.contract.length > 0) {
+      postData.contract.forEach(element => {
+        this.contractService.createContract([element]).subscribe();
+      });
+    }
+    if (postData.project.length > 0) {
+      postData.project.forEach(element => {
+        this.projectService.createProject([element]).subscribe();
+      })
+    }
+    if (postData.location.length > 0) {
+      postData.location.forEach(element => {
+        this.locationService.createLocation([element]).subscribe();
+      });
+    }
   }
 
   public getClient([type]: [string]) {

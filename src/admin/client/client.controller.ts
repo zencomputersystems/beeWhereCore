@@ -6,6 +6,7 @@ import { CreateClientDTO } from './dto/create-client.dto';
 import { UpdateClientDTO } from './dto/update-client.dto';
 import { type } from "os";
 import { runGetServiceV2, runCreateService, runUpdateService } from '../../common/helper/basic-function.service';
+import { UpdateClientBundleDTO } from "./dto/update-bundle.dto";
 
 @Controller('api/client')
 @UseGuards(AuthGuard('jwt'))
@@ -45,4 +46,12 @@ export class ClientController {
   deleteClient(@Param('clientId') clientId, @Res() res) {
     runUpdateService([this.clientService.deleteClient([clientId]), res]);
   }
+
+  @Patch('bundle')
+  @ApiOperation({ title: 'Update client', description: 'Update client' })
+  updateClientBundle(@Body() updateClientBundleData: UpdateClientBundleDTO, @Req() req, @Res() res) {
+    runGetServiceV2([this.clientService.updateClientBundle([updateClientBundleData, req]), res]);
+  }
+
+
 }
