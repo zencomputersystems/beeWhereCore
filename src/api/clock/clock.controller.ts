@@ -45,11 +45,14 @@ export class ClockController {
     runGetServiceV2([this.clockService.getActivityProgress([clockId]), res]);
   }
 
-  // @Get('history/list')
-  // @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
-  // findHistory(@Req() req, @Res() res) {
-  //   runGetServiceV2([this.clockService.getHistoryClock([req.user.USER_GUID]), res]);
-  // }
+  @Get('history/:type/:startdate/:enddate')
+  @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
+  @ApiImplicitParam({ name: 'type', description: 'Report type', required: true, enum: ['attendance', 'activity'] })
+  @ApiImplicitParam({ name: 'startdate', description: 'Start date', required: true })
+  @ApiImplicitParam({ name: 'enddate', description: 'End date', required: true })
+  findHistory(@Param() params, @Req() req, @Res() res) {
+    runGetServiceV2([this.clockService.getHistoryClock([req.user.USER_GUID, params]), res]);
+  }
 
   @Get('history/list/:limit/:page')
   @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })

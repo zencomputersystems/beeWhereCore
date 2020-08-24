@@ -9,6 +9,7 @@ import moment = require("moment");
 import { UpdateClockDTO } from "./dto/update-clock.dto";
 import { ActivityClockDTO } from "./dto/activity-clock.dto";
 import { map } from "rxjs/operators";
+import { response } from "express";
 /** XMLparser from zen library  */
 var { convertJsonToXML, convertXMLToJson } = require('@zencloudservices/xmlparser');
 
@@ -82,31 +83,67 @@ export class ClockService {
     )
   }
 
-  // public getHistoryClock([userId]: [string]) {
-  //   let method = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], null, 20, null, [], null]);
-  //   return method.pipe(map(res => {
-  //     let resArr = [];
-  //     for (var i = 0; i < 15; i++) {
-  //       var startdate = moment().subtract(i, "days").format("YYYY-MM-DD");
-  //       let temp = res.filter(x => moment(x.CLOCK_IN_TIME).format("YYYY-MM-DD") === startdate);
-  //       if (temp.length > 0) {
-  //         let dataTemp = {};
-  //         dataTemp['date'] = startdate;
+  public getHistoryClock([userId, params]: [string, any]) {
 
-  //         temp.forEach(element => {
-  //           if (element.ACTIVITY != null) {
-  //             element.ACTIVITY = convertXMLToJson(element.ACTIVITY);
-  //           }
-  //         });
+    const startDate = moment.unix(params.startdate).utc().format('YYYY-MM-DD 00:00:00');
+    let endDate = moment.unix(params.enddate).utc().format('YYYY-MM-DD 23:59:59');
 
-  //         dataTemp['list'] = temp;
+    let method = this.clockLogDbService.findByFilterV4([['CLOCK_IN_TIME', 'CLOCK_OUT_TIME', 'ACTIVITY'], [`(USER_GUID=${userId})`, `AND (CLOCK_IN_TIME >= ` + startDate + `)`, `AND (CLOCK_IN_TIME <= ` + endDate + `)`], null, null, null, [], null]);
+    return method.pipe(map(res => {
+      let resArr = [];
+      for (var i = 0; i <= moment(endDate).diff(startDate, "days"); i++) {
+        var startdate = moment(endDate).utc().subtract(i, "days").format("YYYY-MM-DD");
 
-  //         resArr.push(dataTemp);
-  //       }
-  //     }
-  //     return resArr;
-  //   }));
-  // }
+        let temp = res.filter(x => moment(x.CLOCK_IN_TIME).format("YYYY-MM-DD") === startdate);
+        if (temp.length > 0) {
+          // set final structure
+          let dataTemp = {};
+          // assign by date
+          dataTemp['date'] = startdate;
+          // attach latest clock in and out time
+          let previousInDate;
+          let previousOutDate;
+          let activityArr = [];
+          temp.forEach(element => {
+            if (params.type == 'attendance') {
+              delete element.ACTIVITY;
+              previousInDate = previousInDate == null ? element.CLOCK_IN_TIME : previousInDate;
+              previousOutDate = previousOutDate == null ? element.CLOCK_OUT_TIME : previousOutDate;
+
+              previousInDate = previousInDate > element.CLOCK_IN_TIME ? element.CLOCK_IN_TIME : previousInDate;
+              previousOutDate = previousOutDate < element.CLOCK_OUT_TIME ? element.CLOCK_OUT_TIME : previousOutDate;
+            }
+            if (params.type == 'activity') {
+              delete element.CLOCK_IN_TIME;
+              delete element.CLOCK_OUT_TIME;
+              if (element.ACTIVITY != null) {
+                element.ACTIVITY = convertXMLToJson(element.ACTIVITY);
+                element.ACTIVITY = element.ACTIVITY.root.activity;
+                if (element.ACTIVITY != undefined) {
+                  activityArr = [...activityArr, ...element.ACTIVITY];
+                }
+              } else {
+                delete element.ACTIVITY;
+              }
+
+            }
+          });
+
+          if (params.type == 'attendance') {
+            dataTemp['inTime'] = previousInDate;
+            dataTemp['outTime'] = previousOutDate;
+            dataTemp['duration'] = moment(previousOutDate).utc().diff(previousInDate, "hours");
+          }
+          if (params.type == 'activity') {
+            dataTemp['activityList'] = activityArr;
+          }
+
+          resArr.push(dataTemp);
+        }
+      }
+      return resArr;
+    }));
+  }
 
   public getHistoryClockByLimit([userId, params]: [string, any]) {
 

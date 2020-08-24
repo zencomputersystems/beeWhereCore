@@ -48,7 +48,7 @@ export class LocationService {
   public inputDataLocation([model, data]: [ClientLocationModel, CreateLocationDTO]) {
     model.CLIENT_GUID = data.clientId;
     model.LATITUDE = data.latitude;
-    model.LONGITUDE = data.latitude;
+    model.LONGITUDE = data.longitude;
     model.ADDRESS = data.address;
 
     return model
