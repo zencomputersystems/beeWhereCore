@@ -4,4 +4,5 @@ export class ClientProjectModel {
   NAME: string;
   SOC_NO: string;
   DESCRIPTION: string;
+  STATUS: number;
 }

@@ -4,4 +4,5 @@ export class ClientContractModel {
   NAME: string;
   CONTRACT_NO: string;
   DESCRIPTION: string;
+  STATUS: number;
 }

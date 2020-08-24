@@ -50,6 +50,7 @@ export class ContractService {
     model.NAME = data.name;
     model.CONTRACT_NO = data.contractNo;
     model.DESCRIPTION = data.description;
+    model.STATUS = data.status;
 
     return model
   }

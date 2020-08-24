@@ -50,6 +50,7 @@ export class LocationService {
     model.LATITUDE = data.latitude;
     model.LONGITUDE = data.longitude;
     model.ADDRESS = data.address;
+    model.STATUS = data.status;
 
     return model
   }

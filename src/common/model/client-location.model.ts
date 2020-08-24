@@ -4,4 +4,5 @@ export class ClientLocationModel {
   LATITUDE: string;
   LONGITUDE: string;
   ADDRESS: string;
+  STATUS: number;
 }

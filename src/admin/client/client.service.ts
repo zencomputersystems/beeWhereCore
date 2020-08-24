@@ -174,6 +174,7 @@ export class ClientService {
 
     model.NAME = data.name;
     model.ABBR = data.abbr;
+    model.STATUS = 1;
 
     return model;
   }
@@ -186,6 +187,7 @@ export class ClientService {
       model.LATITUDE = element.lat;
       model.LONGITUDE = element.long;
       model.ADDRESS = element.address;
+      model.STATUS = 1;
 
       resource2.resource.push(model);
     });
@@ -201,6 +203,7 @@ export class ClientService {
       model.NAME = element.name;
       model.SOC_NO = element.code;
       model.DESCRIPTION = element.description;
+      model.STATUS = 1;
 
       resource3.resource.push(model);
     });
@@ -216,6 +219,7 @@ export class ClientService {
       model.NAME = element.name;
       model.CONTRACT_NO = element.code;
       model.DESCRIPTION = element.description;
+      model.STATUS = 1;
 
       resource4.resource.push(model);
     });

@@ -50,6 +50,7 @@ export class ProjectService {
     model.NAME = data.name;
     model.SOC_NO = data.socNo;
     model.DESCRIPTION = data.description;
+    model.STATUS = data.status;
 
     return model
   }
