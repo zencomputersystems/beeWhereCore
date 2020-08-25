@@ -45,25 +45,19 @@ export class ClientService {
 
     return this.clientProfileDbService.createByModel([resource, [], [], []]).pipe(
       mergeMap(res => {
-        const dataLocation = new ClientLocationModel();
 
         const resource2 = new Resource(new Array);
-        this.inputDataLocation([dataLocation, clientData, resource2, clientId]);
-
+        this.inputDataLocation([clientData, resource2, clientId]);
         return this.clientLocationDbService.createByModel([resource2, [], [], []]);
       }), mergeMap(res => {
-        const dataProject = new ClientProjectModel();
 
         const resource3 = new Resource(new Array);
-        this.inputDataProject([dataProject, clientData, resource3, clientId]);
-
+        this.inputDataProject([clientData, resource3, clientId]);
         return this.clientProjectDbService.createByModel([resource3, [], [], []])
       }), mergeMap(res => {
-        const dataContract = new ClientContractModel();
 
         const resource4 = new Resource(new Array);
-        this.inputDataContract([dataContract, clientData, resource4, clientId]);
-
+        this.inputDataContract([clientData, resource4, clientId]);
         return this.clientContractDbService.createByModel([resource4, [], [], []])
       })
     );
@@ -207,9 +201,10 @@ export class ClientService {
     return model;
   }
 
-  public inputDataLocation([model, data, resource2, clientId]: [ClientLocationModel, CreateClientDTO, Resource, string]) {
+  public inputDataLocation([data, resource2, clientId]: [CreateClientDTO, Resource, string]) {
     // const clientId = data.id;
     data.location.forEach(element => {
+      let model = new ClientLocationModel;
       model.LOCATION_GUID = v1();
       model.CLIENT_GUID = clientId;
       model.LATITUDE = element.lat;
@@ -223,9 +218,10 @@ export class ClientService {
     return resource2;
   }
 
-  public inputDataProject([model, data, resource3, clientId]: [ClientProjectModel, CreateClientDTO, Resource, string]) {
-    // const clientId = data.id;
+  public inputDataProject([data, resource3, clientId]: [CreateClientDTO, Resource, string]) {
+
     data.project.forEach(element => {
+      let model = new ClientProjectModel;
       model.PROJECT_GUID = v1();
       model.CLIENT_GUID = clientId;
       model.NAME = element.name;
@@ -235,13 +231,13 @@ export class ClientService {
 
       resource3.resource.push(model);
     });
-
     return resource3;
   }
 
-  public inputDataContract([model, data, resource4, clientId]: [ClientContractModel, CreateClientDTO, Resource, string]) {
+  public inputDataContract([data, resource4, clientId]: [CreateClientDTO, Resource, string]) {
     // const clientId = data.id;
     data.contract.forEach(element => {
+      let model = new ClientContractModel;
       model.CONTRACT_GUID = v1();
       model.CLIENT_GUID = clientId;
       model.NAME = element.name;
