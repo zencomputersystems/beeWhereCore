@@ -27,9 +27,4 @@ export class UpdateProjectDTO {
   @IsString()
   description: string;
 
-  @ApiModelProperty({ description: 'Status active', example: 1 })
-  @IsNotEmpty()
-  @IsNumber()
-  status: number;
-
 }

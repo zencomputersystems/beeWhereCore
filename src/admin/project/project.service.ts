@@ -45,12 +45,23 @@ export class ProjectService {
     // return of(data);
   }
 
+  public deleteProject([projectId]: [string]) {
+    const data = new ClientProjectModel
+    data.PROJECT_GUID = projectId;
+    data.STATUS = 0;
+
+    const resource = new Resource(new Array);
+    resource.resource.push(data);
+
+    return this.clientProjectDbService.updateByModel([resource, [], [], []]);
+  }
+
   public inputDataProject([model, data]: [ClientProjectModel, CreateProjectDTO]) {
     model.CLIENT_GUID = data.clientId;
     model.NAME = data.name;
     model.SOC_NO = data.socNo;
     model.DESCRIPTION = data.description;
-    model.STATUS = data.status;
+    model.STATUS = 1;
 
     return model
   }

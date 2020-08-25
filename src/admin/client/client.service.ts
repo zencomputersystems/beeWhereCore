@@ -10,7 +10,7 @@ import { ClientLocationModel } from "../../common/model/client-location.model";
 import { mergeMap, map } from "rxjs/operators";
 import { ClientProjectModel } from "../../common/model/client-project.model";
 import { ClientContractModel } from "../../common/model/client-contract.model";
-import { UpdateClientBundleDTO, PatchBundleDTO, PostBundleDTO } from './dto/update-bundle.dto';
+import { UpdateClientBundleDTO, PatchBundleDTO, PostBundleDTO, DeleteBundleDTO } from './dto/update-bundle.dto';
 import { of } from "rxjs";
 import { ProjectService } from '../project/project.service';
 import { LocationService } from '../location/location.service';
@@ -84,9 +84,11 @@ export class ClientService {
   public updateClientBundle([bundleClientData, req]: [UpdateClientBundleDTO, UserMainModel]) {
     let patchData = bundleClientData.patch;
     let postData = bundleClientData.post;
+    let deleteData = bundleClientData.delete;
 
     let patchResource = this.patchProcessBundle([patchData]);
     let postResource = this.postProcessBundle([postData]);
+    let deleteResource = this.deleteProcessBundle([deleteData]);
 
 
 
@@ -101,6 +103,24 @@ export class ClientService {
     // resource.resource.push(data);
 
     // return this.clientProfileDbService.updateByModel([resource, [], [], []]);
+  }
+
+  private deleteProcessBundle([deleteData]: [DeleteBundleDTO]) {
+    if (deleteData.contract.length > 0) {
+      deleteData.contract.forEach(element => {
+        this.contractService.deleteContract([element.id]).subscribe();
+      });
+    }
+    if (deleteData.project.length > 0) {
+      deleteData.project.forEach(element => {
+        this.projectService.deleteProject([element.id]).subscribe();
+      })
+    }
+    if (deleteData.location.length > 0) {
+      deleteData.location.forEach(element => {
+        this.locationService.deleteLocation([element.id]).subscribe();
+      });
+    }
   }
 
   private patchProcessBundle([patchData]: [PatchBundleDTO]) {
@@ -149,9 +169,9 @@ export class ClientService {
     if (type == 'detail') {
       let url = this.clientProfileDbService.queryService.generateDbQueryV3(['a_client_profile', ['CLIENT_GUID', 'NAME', 'ABBR'], [`(STATUS=1)`], null, null, null, ['LOCATION_DATA', 'CONTRACT_DATA', 'PROJECT_DATA'], null]);
 
-      const projectFieldUrl = '&PROJECT_DATA.fields=PROJECT_GUID,NAME,SOC_NO,DESCRIPTION';
-      const locationFieldUrl = '&LOCATION_DATA.fields=LOCATION_GUID,LATITUDE,LONGITUDE,ADDRESS';
-      const contractFieldUrl = '&CONTRACT_DATA.fields=CONTRACT_GUID,NAME,CONTRACT_NO,DESCRIPTION';
+      const projectFieldUrl = '&PROJECT_DATA.fields=PROJECT_GUID,NAME,SOC_NO,DESCRIPTION,STATUS';
+      const locationFieldUrl = '&LOCATION_DATA.fields=LOCATION_GUID,LATITUDE,LONGITUDE,ADDRESS,STATUS';
+      const contractFieldUrl = '&CONTRACT_DATA.fields=CONTRACT_GUID,NAME,CONTRACT_NO,DESCRIPTION,STATUS';
 
       url = url + projectFieldUrl + locationFieldUrl + contractFieldUrl
 
@@ -159,6 +179,14 @@ export class ClientService {
         .pipe(
           map(res => {
             if (res.status == 200) {
+              res.data.resource.forEach(element => {
+                element.PROJECT_DATA = element.PROJECT_DATA.filter(x => x.STATUS === 1);
+                element.CONTRACT_DATA = element.CONTRACT_DATA.filter(x => x.STATUS === 1);
+                element.LOCATION_DATA = element.LOCATION_DATA.filter(x => x.STATUS === 1);
+                element.PROJECT_DATA.forEach(x => { delete x.STATUS; });
+                element.CONTRACT_DATA.forEach(x => { delete x.STATUS; });
+                element.LOCATION_DATA.forEach(x => { delete x.STATUS; });
+              });
               return res.data.resource;
             }
           })

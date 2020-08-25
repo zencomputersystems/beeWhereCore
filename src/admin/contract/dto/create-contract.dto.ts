@@ -21,9 +21,4 @@ export class CreateContractDTO {
   @IsNotEmpty()
   @IsString()
   description: string;
-
-  @ApiModelProperty({ description: 'Status active', example: 1 })
-  @IsNotEmpty()
-  @IsNumber()
-  status: number;
 }

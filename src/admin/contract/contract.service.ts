@@ -45,12 +45,23 @@ export class ContractService {
     // return of(data);
   }
 
+  public deleteContract([contractId]: [string]) {
+    const data = new ClientContractModel
+    data.CONTRACT_GUID = contractId;
+    data.STATUS = 0;
+
+    const resource = new Resource(new Array);
+    resource.resource.push(data);
+
+    return this.clientContractDbService.updateByModel([resource, [], [], []]);
+  }
+
   public inputDataContract([model, data]: [ClientContractModel, CreateContractDTO]) {
     model.CLIENT_GUID = data.clientId;
     model.NAME = data.name;
     model.CONTRACT_NO = data.contractNo;
     model.DESCRIPTION = data.description;
-    model.STATUS = data.status;
+    model.STATUS = 1;
 
     return model
   }

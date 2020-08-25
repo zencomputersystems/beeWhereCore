@@ -21,9 +21,4 @@ export class CreateLocationDTO {
   @IsNotEmpty()
   @IsString()
   address: string;
-
-  @ApiModelProperty({ description: 'Status active', example: 1 })
-  @IsNotEmpty()
-  @IsNumber()
-  status: number;
 }

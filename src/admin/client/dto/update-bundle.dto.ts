@@ -6,9 +6,31 @@ import { CreateProjectDTO } from '../../project/dto/create-project.dto';
 import { CreateContractDTO } from '../../contract/dto/create-contract.dto';
 import { CreateLocationDTO } from '../../location/dto/create-location.dto';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 import { Type, Transform, Exclude } from 'class-transformer';
 import { SerializeOptions } from '@nestjs/common';
+
+export class DeleteDetailsDTO {
+  @ApiModelProperty({ description: 'Id' })
+  @IsString()
+  @IsOptional()
+  id: string;
+}
+
+export class DeleteBundleDTO {
+  @ApiModelProperty({ description: 'Add location', type: [DeleteDetailsDTO] })
+  @IsNotEmpty()
+  @Type(() => DeleteDetailsDTO)
+  project: DeleteDetailsDTO[];
+  @ApiModelProperty({ description: 'Add location', type: [DeleteDetailsDTO] })
+  @IsNotEmpty()
+  @Type(() => DeleteDetailsDTO)
+  contract: DeleteDetailsDTO[];
+  @ApiModelProperty({ description: 'Add location', type: [DeleteDetailsDTO] })
+  @IsNotEmpty()
+  @Type(() => DeleteDetailsDTO)
+  location: DeleteDetailsDTO[];
+}
 
 export class PostBundleDTO {
   @ApiModelProperty({ description: 'Add location', type: [CreateProjectDTO] })
@@ -57,4 +79,8 @@ export class UpdateClientBundleDTO {
   @IsNotEmpty()
   @Type(() => PostBundleDTO)
   post: PostBundleDTO;
+  @ApiModelProperty({ description: 'Delete bundle', type: DeleteBundleDTO })
+  @IsNotEmpty()
+  @Type(() => DeleteBundleDTO)
+  delete: DeleteBundleDTO;
 }

@@ -45,12 +45,23 @@ export class LocationService {
     // return of(data);
   }
 
+  public deleteLocation([locationId]: [string]) {
+    const data = new ClientLocationModel
+    data.LOCATION_GUID = locationId;
+    data.STATUS = 0;
+
+    const resource = new Resource(new Array);
+    resource.resource.push(data);
+
+    return this.clientLocationDbService.updateByModel([resource, [], [], []]);
+  }
+
   public inputDataLocation([model, data]: [ClientLocationModel, CreateLocationDTO]) {
     model.CLIENT_GUID = data.clientId;
     model.LATITUDE = data.latitude;
     model.LONGITUDE = data.longitude;
     model.ADDRESS = data.address;
-    model.STATUS = data.status;
+    model.STATUS = 1;
 
     return model
   }
