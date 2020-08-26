@@ -1,17 +1,20 @@
 import { Injectable } from "@nestjs/common";
-import { SupportTicketDbService } from "../../common/db/table.db.service";
+import { SupportTicketDbService, UserprofileDbService } from "../../common/db/table.db.service";
 import { CreateSupportDTO } from './dto/create-support.dto';
 import { SupportTicketModel } from '../../common/model/support-ticket.model';
 import { v1 } from "uuid";
 import { Resource } from "../../common/model/resource.model";
 import moment = require("moment");
-import { map } from "rxjs/operators";
+import { map, mergeMap } from "rxjs/operators";
 import { of } from "rxjs";
 
 @Injectable()
 export class SupportService {
 
-  constructor(private readonly supportTicketDbService: SupportTicketDbService) { }
+  constructor(
+    private readonly supportTicketDbService: SupportTicketDbService,
+    private readonly userprofileDbService: UserprofileDbService
+  ) { }
 
   public createSupportIssue([createSupportDto]: [CreateSupportDTO]) {
     const dataSupport = new SupportTicketModel
@@ -25,26 +28,37 @@ export class SupportService {
   }
 
   public getSupportIssue([data]) {
-    return this.supportTicketDbService.findByFilterV4([[], [], null, null, null, [], null]).pipe(
-      map(res => {
-        let results = {};
-        res.forEach(x => {
-          x.STATUS = x.STATUS = 0 ? 'pending' : x.STATUS = 1 ? 'approved' : 'rejected';
-          if (x.REQUEST_TYPE == 'suggestions') {
-            delete x.START_TIME;
-            delete x.END_TIME;
-            delete x.STATUS;
-          }
-        });
-        let requestData = res.filter(x => x.REQUEST_TYPE != 'suggestions');
-        let suggestionData = res.filter(x => x.REQUEST_TYPE === 'suggestions');
+    return this.userprofileDbService.findByFilterV4([['USER_GUID', 'FULLNAME'], [], null, null, null, [], null]).pipe(
+      mergeMap(res1 => {
+        return this.supportTicketDbService.findByFilterV4([[], [], null, null, null, [], null]).pipe(
+          map(res => {
+            let results = {};
+            res.forEach(x => {
+              let userFullname = res1.find(y => y.USER_GUID === x.USER_GUID);
+              // Add fullname
+              x.FULLNAME = userFullname.FULLNAME;
+              x.STATUS = x.STATUS = 0 ? 'pending' : x.STATUS = 1 ? 'approved' : 'rejected';
+              if (x.REQUEST_TYPE == 'suggestions') {
+                delete x.START_TIME;
+                delete x.END_TIME;
+                delete x.STATUS;
+              }
+            });
+            let requestData = res.filter(x => x.REQUEST_TYPE != 'suggestions');
+            let suggestionData = res.filter(x => x.REQUEST_TYPE === 'suggestions');
 
-        results['request'] = requestData;
-        results['suggestion'] = suggestionData;
+            results['request'] = requestData;
+            results['suggestion'] = suggestionData;
 
-        return results;
+            return results;
+          })
+        );
+
+        // return res;
       })
-    );
+    )
+    // .subscribe();
+    // return 
   }
 
   private inputDataSupport([model, data]: [SupportTicketModel, CreateSupportDTO]) {
