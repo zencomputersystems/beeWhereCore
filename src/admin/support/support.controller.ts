@@ -4,6 +4,7 @@ import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { SupportService } from './support.service';
 import { CreateSupportDTO } from "./dto/create-support.dto";
 import { runCreateService, runGetServiceV2 } from '../../common/helper/basic-function.service';
+import { CreateClarificationDTO } from './dto/create-clarification.dto';
 
 @Controller('support')
 @UseGuards(AuthGuard('jwt'))
@@ -21,4 +22,11 @@ export class SupportController {
   getSupportIssue(@Res() res) {
     runGetServiceV2([this.supportService.getSupportIssue([null]), res]);
   }
+
+  @Post('clarification')
+  @ApiOperation({ title: 'Reply for clarification' })
+  createClarification(@Body() createClarificationDTO: CreateClarificationDTO, @Res() res) {
+    runCreateService([this.supportService.createClarification([createClarificationDTO]), res]);
+  }
+
 }

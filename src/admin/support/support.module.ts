@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { SupportService } from './support.service';
 import { SupportController } from "./support.controller";
 import { getModuleHttp } from '../../common/helper/basic-function.service';
-import { SupportTicketDbService, UserprofileDbService } from "../../common/db/table.db.service";
+import { SupportTicketDbService, UserprofileDbService, SupportClarificationDbService } from "../../common/db/table.db.service";
 import { QueryParserService } from '../../common/helper/query-parser.service';
 
 @Module({
@@ -10,6 +10,7 @@ import { QueryParserService } from '../../common/helper/query-parser.service';
     SupportService,
     SupportTicketDbService,
     UserprofileDbService,
+    SupportClarificationDbService,
     QueryParserService
   ],
   controllers: [SupportController],

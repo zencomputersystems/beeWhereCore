@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { SupportTicketDbService, UserprofileDbService } from "../../common/db/table.db.service";
+import { SupportTicketDbService, UserprofileDbService, SupportClarificationDbService } from "../../common/db/table.db.service";
 import { CreateSupportDTO } from './dto/create-support.dto';
 import { SupportTicketModel } from '../../common/model/support-ticket.model';
 import { v1 } from "uuid";
@@ -7,14 +7,28 @@ import { Resource } from "../../common/model/resource.model";
 import moment = require("moment");
 import { map, mergeMap } from "rxjs/operators";
 import { of } from "rxjs";
+import { SupportClarificationModel } from "../../common/model/support-clarification.model";
+import { CreateClarificationDTO } from "./dto/create-clarification.dto";
 
 @Injectable()
 export class SupportService {
 
   constructor(
     private readonly supportTicketDbService: SupportTicketDbService,
-    private readonly userprofileDbService: UserprofileDbService
+    private readonly userprofileDbService: UserprofileDbService,
+    private readonly supportClarificationDbService: SupportClarificationDbService
   ) { }
+
+  public createClarification([createClarificationDto]: [CreateClarificationDTO]) {
+    const dataClarification = new SupportClarificationModel
+
+    dataClarification.SUPPORT_GUID = v1();
+    this.inputDataClarification([dataClarification, createClarificationDto]);
+
+    const resource = new Resource(new Array);
+    resource.resource.push(dataClarification);
+    return this.supportClarificationDbService.createByModel([resource, [], [], ['SUPPORT_GUID']]);
+  }
 
   public createSupportIssue([createSupportDto]: [CreateSupportDTO]) {
     const dataSupport = new SupportTicketModel
@@ -72,6 +86,15 @@ export class SupportService {
     model.END_TIME = moment.unix(data.endtime).format('YYYY-MM-DD HH:mm:ss').toString();
     model.CREATION_TS = moment().format('YYYY-MM-DD HH:mm:ss').toString();
     model.STATUS = 0;
+    return model;
+  }
+
+  private inputDataClarification([model, data]: [SupportClarificationModel, CreateClarificationDTO]) {
+    model.SUPPORT_GUID = data.supportId;
+    model.USER_GUID = data.userId;
+    model.ATTACHMENT = data.doc;
+    model.MESSAGE = data.message;
+    model.CREATION_TS = moment().format('YYYY-MM-DD HH:mm:ss').toString();
     return model;
   }
 
