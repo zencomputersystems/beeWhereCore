@@ -5,6 +5,7 @@ import { SupportService } from './support.service';
 import { CreateSupportDTO } from "./dto/create-support.dto";
 import { runCreateService, runGetServiceV2 } from '../../common/helper/basic-function.service';
 import { CreateClarificationDTO } from './dto/create-clarification.dto';
+import { CreateAdminClarificationDTO } from "./dto/create-admin-clarification.dto";
 
 @Controller('support')
 @UseGuards(AuthGuard('jwt'))
@@ -27,6 +28,12 @@ export class SupportController {
   @ApiOperation({ title: 'Reply for clarification' })
   createClarification(@Body() createClarificationDTO: CreateClarificationDTO, @Res() res) {
     runCreateService([this.supportService.createClarification([createClarificationDTO]), res]);
+  }
+
+  @Post('admin/clarification')
+  @ApiOperation({ title: 'Admin reply for clarification' })
+  createAdminClarification(@Body() createAdminClarificationDTO: CreateAdminClarificationDTO, @Res() res) {
+    runCreateService([this.supportService.createAdminClarification([createAdminClarificationDTO]), res]);
   }
 
 }

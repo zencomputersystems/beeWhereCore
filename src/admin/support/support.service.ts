@@ -9,6 +9,7 @@ import { map, mergeMap } from "rxjs/operators";
 import { of } from "rxjs";
 import { SupportClarificationModel } from "../../common/model/support-clarification.model";
 import { CreateClarificationDTO } from "./dto/create-clarification.dto";
+import { CreateAdminClarificationDTO } from "./dto/create-admin-clarification.dto";
 
 @Injectable()
 export class SupportService {
@@ -24,10 +25,34 @@ export class SupportService {
 
     dataClarification.SUPPORT_GUID = v1();
     this.inputDataClarification([dataClarification, createClarificationDto]);
+    dataClarification.USER_REPLY = 'user';
 
     const resource = new Resource(new Array);
     resource.resource.push(dataClarification);
     return this.supportClarificationDbService.createByModel([resource, [], [], ['SUPPORT_GUID']]);
+  }
+
+  public createAdminClarification([createAdminClarificationDto]: [CreateAdminClarificationDTO]) {
+    const dataClarification = new SupportClarificationModel
+
+    dataClarification.SUPPORT_GUID = createAdminClarificationDto.supportId;
+    this.inputDataClarification([dataClarification, createAdminClarificationDto]);
+    dataClarification.STATUS = createAdminClarificationDto.status === 'approved' ? 1 : createAdminClarificationDto.status === 'rejected' ? 2 : 0;
+    dataClarification.USER_REPLY = 'admin';
+    const resource = new Resource(new Array);
+    resource.resource.push(dataClarification);
+    return this.supportClarificationDbService.createByModel([resource, [], [], ['SUPPORT_GUID']]).pipe(
+      mergeMap(res => {
+
+        const model = new SupportTicketModel;
+        const resource2 = new Resource(new Array);
+        model.SUPPORT_GUID = createAdminClarificationDto.supportId;
+        model.STATUS = dataClarification.STATUS;
+        resource2.resource.push(model);
+
+        return this.supportTicketDbService.updateByModel([resource2, [], [], []]);
+      })
+    );
   }
 
   public createSupportIssue([createSupportDto]: [CreateSupportDTO]) {
@@ -39,6 +64,17 @@ export class SupportService {
     const resource = new Resource(new Array);
     resource.resource.push(dataSupport);
     return this.supportTicketDbService.createByModel([resource, [], [], []]);
+  }
+
+  private updateStatusSupport([supportId, statusId]: [string, number]) {
+    console.log(supportId + '-' + statusId);
+    const model = new SupportTicketModel;
+    const resource2 = new Resource(new Array);
+    model.SUPPORT_GUID = supportId;
+    model.STATUS = statusId;
+    resource2.resource.push(model);
+    console.log(resource2);
+    this.supportTicketDbService.updateByModel([resource2, [], [], []]).subscribe();
   }
 
   public getSupportIssue([data]) {
@@ -80,7 +116,7 @@ export class SupportService {
     model.USER_EMAIL = data.userEmail;
     model.REQUEST_TYPE = data.requestType;
     model.TITLE = data.subject;
-    model.ATTACHMENT = data.supportingDoc;
+    model.ATTACHMENT = data.supportingDoc.toString();
     model.DESCRIPTION = data.description;
     model.START_TIME = moment.unix(data.starttime).format('YYYY-MM-DD HH:mm:ss').toString();
     model.END_TIME = moment.unix(data.endtime).format('YYYY-MM-DD HH:mm:ss').toString();
@@ -92,7 +128,7 @@ export class SupportService {
   private inputDataClarification([model, data]: [SupportClarificationModel, CreateClarificationDTO]) {
     model.SUPPORT_GUID = data.supportId;
     model.USER_GUID = data.userId;
-    model.ATTACHMENT = data.doc;
+    model.ATTACHMENT = data.doc.toString();
     model.MESSAGE = data.message;
     model.CREATION_TS = moment().format('YYYY-MM-DD HH:mm:ss').toString();
     return model;

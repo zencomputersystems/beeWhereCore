@@ -4,4 +4,6 @@ export class SupportClarificationModel {
   ATTACHMENT: string;
   MESSAGE: string;
   CREATION_TS: string;
+  STATUS: number;
+  USER_REPLY: string;
 }

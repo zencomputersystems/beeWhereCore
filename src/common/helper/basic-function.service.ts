@@ -78,6 +78,7 @@ export function getResults([method, res, message]) {
       }
     },
     err => {
+      // console.log(err.response.data.error.context.resource);
       const response: { status: string } = { status: message };
       sendResErrorV2([res, HttpStatus.BAD_REQUEST, response]);
     }
