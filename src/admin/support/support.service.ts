@@ -20,6 +20,21 @@ export class SupportService {
     private readonly supportClarificationDbService: SupportClarificationDbService
   ) { }
 
+  public getClarificationList([supportId]: [string]) {
+    return this.supportClarificationDbService.findByFilterV4([[], [`(SUPPORT_GUID=${supportId})`], 'CREATION_TS DESC', null, null, [], null]).pipe(
+      map(res => {
+        res.forEach(x => {
+          x.STATUS = x.STATUS == 1 ? 'approved' : x.STATUS == 2 ? 'rejected' : 'pending'
+          if (x.USER_REPLY == 'user') {
+            delete x.STATUS;
+          }
+        });
+        return res;
+      })
+    )
+    // return of(supportId);
+  }
+
   public createClarification([createClarificationDto]: [CreateClarificationDTO]) {
     const dataClarification = new SupportClarificationModel
 

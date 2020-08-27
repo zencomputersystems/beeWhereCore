@@ -1,6 +1,6 @@
-import { Controller, UseGuards, Post, Body, Req, Res, Get } from "@nestjs/common";
+import { Controller, UseGuards, Post, Body, Req, Res, Get, Param } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiImplicitParam } from "@nestjs/swagger";
 import { SupportService } from './support.service';
 import { CreateSupportDTO } from "./dto/create-support.dto";
 import { runCreateService, runGetServiceV2 } from '../../common/helper/basic-function.service';
@@ -36,4 +36,10 @@ export class SupportController {
     runCreateService([this.supportService.createAdminClarification([createAdminClarificationDTO]), res]);
   }
 
+  @Get(':supportId')
+  @ApiOperation({ title: 'Get clarification list ' })
+  @ApiImplicitParam({ name: 'supportId' })
+  getClarificationList(@Param('supportId') supportId, @Res() res) {
+    runGetServiceV2([this.supportService.getClarificationList([supportId]), res]);
+  }
 }
