@@ -21,10 +21,10 @@ export class CreateSupportDTO {
   @ApiModelProperty({ description: 'Description', example: 'Ot for LHDN project' })
   @IsString()
   description: string;
-  @ApiModelProperty({ description: 'User id', example: 'hf73289hf7h7fef7h93ejfbkq983y47' })
+  @ApiModelProperty({ description: 'User id', example: '19e05640-e066-11ea-af91-59951dfe7847' })
   @IsString()
   userGuid: string;
-  @ApiModelProperty({ description: 'User email', example: 'tarmimi@zen.com.my' })
+  @ApiModelProperty({ description: 'User email', example: 'kenna.ratke35@ethereal.email' })
   @IsString()
   userEmail: string;
 }

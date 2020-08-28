@@ -101,8 +101,9 @@ export class SupportService {
             res.forEach(x => {
               let userFullname = res1.find(y => y.USER_GUID === x.USER_GUID);
               // Add fullname
-              x.FULLNAME = userFullname.FULLNAME;
-              x.STATUS = x.STATUS = 0 ? 'pending' : x.STATUS = 1 ? 'approved' : 'rejected';
+              if (userFullname != null)
+                x.FULLNAME = userFullname.FULLNAME;
+              x.STATUS = x.STATUS == 0 ? 'pending' : x.STATUS == 1 ? 'approved' : 'rejected';
               if (x.REQUEST_TYPE == 'suggestions') {
                 delete x.START_TIME;
                 delete x.END_TIME;
