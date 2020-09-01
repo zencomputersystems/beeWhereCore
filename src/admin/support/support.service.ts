@@ -21,17 +21,36 @@ export class SupportService {
   ) { }
 
   public getClarificationList([supportId]: [string]) {
-    return this.supportClarificationDbService.findByFilterV4([[], [`(SUPPORT_GUID=${supportId})`], 'CREATION_TS DESC', null, null, [], null]).pipe(
-      map(res => {
-        res.forEach(x => {
-          x.STATUS = x.STATUS == 1 ? 'approved' : x.STATUS == 2 ? 'rejected' : 'pending'
-          if (x.USER_REPLY == 'user') {
-            delete x.STATUS;
-          }
-        });
-        return res;
-      })
-    )
+    return this.userprofileDbService.findByFilterV4([['USER_GUID', 'FULLNAME'], [], null, null, null, [], null]).pipe(
+      mergeMap(res1 => {
+        return this.supportClarificationDbService.findByFilterV4([[], [`(SUPPORT_GUID=${supportId})`], 'CREATION_TS DESC', null, null, [], null]).pipe(
+          map(res => {
+
+            res.forEach(x => {
+              let userFullname = res1.find(y => y.USER_GUID === x.USER_GUID);
+
+              if (userFullname != null)
+                x.FULLNAME = userFullname.FULLNAME;
+              x.STATUS = x.STATUS == 1 ? 'approved' : x.STATUS == 2 ? 'rejected' : x.STATUS == 3 ? 'responded' : 'pending'
+              if (x.USER_REPLY == 'user') {
+                delete x.STATUS;
+              }
+            });
+            return res;
+          })
+        )
+      }))
+    // return this.supportClarificationDbService.findByFilterV4([[], [`(SUPPORT_GUID=${supportId})`], 'CREATION_TS DESC', null, null, [], null]).pipe(
+    //   map(res => {
+    //     res.forEach(x => {
+    //       x.STATUS = x.STATUS == 1 ? 'approved' : x.STATUS == 2 ? 'rejected' : x.STATUS == 3 ? 'responded' : 'pending'
+    //       if (x.USER_REPLY == 'user') {
+    //         delete x.STATUS;
+    //       }
+    //     });
+    //     return res;
+    //   })
+    // )
     // return of(supportId);
   }
 
@@ -52,7 +71,8 @@ export class SupportService {
 
     dataClarification.SUPPORT_GUID = createAdminClarificationDto.supportId;
     this.inputDataClarification([dataClarification, createAdminClarificationDto]);
-    dataClarification.STATUS = createAdminClarificationDto.status === 'approved' ? 1 : createAdminClarificationDto.status === 'rejected' ? 2 : 0;
+    // 0-Pending, 1-Approved, 2-Rejected, 3-Responded
+    dataClarification.STATUS = createAdminClarificationDto.status === 'approved' ? 1 : createAdminClarificationDto.status === 'rejected' ? 2 : 3;
     dataClarification.USER_REPLY = 'admin';
     const resource = new Resource(new Array);
     resource.resource.push(dataClarification);
@@ -81,16 +101,16 @@ export class SupportService {
     return this.supportTicketDbService.createByModel([resource, [], [], []]);
   }
 
-  private updateStatusSupport([supportId, statusId]: [string, number]) {
-    console.log(supportId + '-' + statusId);
-    const model = new SupportTicketModel;
-    const resource2 = new Resource(new Array);
-    model.SUPPORT_GUID = supportId;
-    model.STATUS = statusId;
-    resource2.resource.push(model);
-    console.log(resource2);
-    this.supportTicketDbService.updateByModel([resource2, [], [], []]).subscribe();
-  }
+  // private updateStatusSupport([supportId, statusId]: [string, number]) {
+  //   console.log(supportId + '-' + statusId);
+  //   const model = new SupportTicketModel;
+  //   const resource2 = new Resource(new Array);
+  //   model.SUPPORT_GUID = supportId;
+  //   model.STATUS = statusId;
+  //   resource2.resource.push(model);
+  //   console.log(resource2);
+  //   this.supportTicketDbService.updateByModel([resource2, [], [], []]).subscribe();
+  // }
 
   public getSupportIssue([data]) {
     return this.userprofileDbService.findByFilterV4([['USER_GUID', 'FULLNAME'], [], null, null, null, [], null]).pipe(
@@ -103,7 +123,7 @@ export class SupportService {
               // Add fullname
               if (userFullname != null)
                 x.FULLNAME = userFullname.FULLNAME;
-              x.STATUS = x.STATUS == 0 ? 'pending' : x.STATUS == 1 ? 'approved' : 'rejected';
+              x.STATUS = x.STATUS == 3 ? 'responded' : x.STATUS == 1 ? 'approved' : x.STATUS == 2 ? 'rejected' : 'pending';
               if (x.REQUEST_TYPE == 'suggestions') {
                 delete x.START_TIME;
                 delete x.END_TIME;
