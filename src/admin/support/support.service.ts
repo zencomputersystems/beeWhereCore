@@ -152,7 +152,7 @@ export class SupportService {
     model.USER_EMAIL = data.userEmail;
     model.REQUEST_TYPE = data.requestType;
     model.TITLE = data.subject;
-    model.ATTACHMENT = data.supportingDoc.toString();
+    model.ATTACHMENT = data.supportingDoc;
     model.DESCRIPTION = data.description;
     model.START_TIME = moment.unix(data.starttime).format('YYYY-MM-DD HH:mm:ss').toString();
     model.END_TIME = moment.unix(data.endtime).format('YYYY-MM-DD HH:mm:ss').toString();
@@ -164,7 +164,7 @@ export class SupportService {
   private inputDataClarification([model, data]: [SupportClarificationModel, CreateClarificationDTO]) {
     model.SUPPORT_GUID = data.supportId;
     model.USER_GUID = data.userId;
-    model.ATTACHMENT = data.doc.toString();
+    model.ATTACHMENT = data.doc;
     model.MESSAGE = data.message;
     model.CREATION_TS = moment().format('YYYY-MM-DD HH:mm:ss').toString();
     return model;
