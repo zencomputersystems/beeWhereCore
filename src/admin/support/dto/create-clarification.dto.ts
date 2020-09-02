@@ -9,7 +9,7 @@ export class CreateClarificationDTO {
   @IsString()
   userId: string;
   @ApiModelProperty({ description: 'Supporting document', example: "6987604_secondfile.jpg" })
-  @IsArray()
+  @IsString()
   doc: string;
   @ApiModelProperty({ description: 'Message', example: 'Dear all,\n\n  In accordance with Hari Raya celebration, we would like to request all staff to take 1 day annual leave due to a close down of operations on 7 June 2019. Kindly apply annual leave for the low productivity period and take this as an opportunity to have a substantial break for family. \n  \n  This is not applicable to Manage365 and backup of Resident Engineer.\n' })
   @IsString()
