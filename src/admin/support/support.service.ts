@@ -21,7 +21,7 @@ export class SupportService {
   ) { }
 
   public getClarificationList([supportId]: [string]) {
-    return this.userprofileDbService.findByFilterV4([['USER_GUID', 'FULLNAME'], [], null, null, null, [], null]).pipe(
+    return this.userprofileDbService.findByFilterV4([['USER_GUID', 'FULLNAME', 'PROFILE_PICTURE', 'EMAIL'], [], null, null, null, [], null]).pipe(
       mergeMap(res1 => {
         return this.supportClarificationDbService.findByFilterV4([[], [`(SUPPORT_GUID=${supportId})`], 'CREATION_TS DESC', null, null, [], null]).pipe(
           map(res => {
@@ -29,8 +29,11 @@ export class SupportService {
             res.forEach(x => {
               let userFullname = res1.find(y => y.USER_GUID === x.USER_GUID);
 
-              if (userFullname != null)
+              if (userFullname != null) {
                 x.FULLNAME = userFullname.FULLNAME;
+                x.PROFILE_PICTURE = userFullname.PROFILE_PICTURE;
+                x.EMAIL = userFullname.EMAIL;
+              }
               x.STATUS = x.STATUS == 1 ? 'approved' : x.STATUS == 2 ? 'rejected' : x.STATUS == 3 ? 'responded' : 'pending'
               if (x.USER_REPLY == 'user') {
                 delete x.STATUS;
