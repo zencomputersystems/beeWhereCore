@@ -83,6 +83,7 @@ export class SupportService {
         const resource2 = new Resource(new Array);
         model.SUPPORT_GUID = createAdminClarificationDto.supportId;
         model.STATUS = dataClarification.STATUS;
+        model.MODULE = 'admin';
         resource2.resource.push(model);
 
         return this.supportTicketDbService.updateByModel([resource2, [], [], []]);
@@ -158,6 +159,7 @@ export class SupportService {
     model.END_TIME = moment.unix(data.endtime).format('YYYY-MM-DD HH:mm:ss').toString();
     model.CREATION_TS = moment().format('YYYY-MM-DD HH:mm:ss').toString();
     model.STATUS = 0;
+    model.MODULE = 'admin';
     return model;
   }
 

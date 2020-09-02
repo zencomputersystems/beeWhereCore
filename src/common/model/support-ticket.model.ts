@@ -10,4 +10,5 @@ export class SupportTicketModel {
   END_TIME: string;
   CREATION_TS: string;
   STATUS: number;
+  MODULE: string;
 }
