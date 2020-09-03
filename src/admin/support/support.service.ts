@@ -132,6 +132,7 @@ export class SupportService {
                 delete x.START_TIME;
                 delete x.END_TIME;
                 delete x.STATUS;
+                delete x.ATTACHMENT;
               }
             });
             let requestData = res.filter(x => x.REQUEST_TYPE != 'suggestions');
