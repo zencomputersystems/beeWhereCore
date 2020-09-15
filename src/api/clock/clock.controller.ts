@@ -54,7 +54,7 @@ export class ClockController {
     runGetServiceV2([this.clockService.getHistoryClock([req.user.USER_GUID, params]), res]);
   }
 
-  @Get('history/list/:limit/:page')
+  @Get('history-list/:limit/:page')
   @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
   @ApiImplicitParam({ name: 'limit', description: 'Quantity limit', required: true })
   @ApiImplicitParam({ name: 'page', description: 'Offset page', required: true })
