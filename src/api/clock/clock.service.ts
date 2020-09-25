@@ -119,8 +119,14 @@ export class ClockService {
               if (element.ACTIVITY != null) {
                 element.ACTIVITY = convertXMLToJson(element.ACTIVITY);
                 element.ACTIVITY = element.ACTIVITY.root.activity;
+                if (element.ACTIVITY.length == undefined) {
+                  let setArr = [];
+                  setArr.push(element.ACTIVITY);
+                  element.ACTIVITY = setArr;
+                }
+
                 if (element.ACTIVITY != undefined) {
-                  activityArr = [...activityArr, ...element.ACTIVITY];
+                  activityArr.push(element.ACTIVITY);
                 }
               } else {
                 delete element.ACTIVITY;
@@ -128,7 +134,6 @@ export class ClockService {
 
             }
           });
-
           if (params.type == 'attendance') {
             dataTemp['inTime'] = previousInDate;
             dataTemp['outTime'] = previousOutDate;
@@ -137,7 +142,6 @@ export class ClockService {
           if (params.type == 'activity') {
             dataTemp['activityList'] = activityArr;
           }
-
           resArr.push(dataTemp);
         }
       }
