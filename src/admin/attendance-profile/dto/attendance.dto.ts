@@ -1,6 +1,34 @@
 import { ApiModelProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsBoolean } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
+
+/**
+ * Autoclockout filter details
+ *
+ * @export
+ * @class AutoClockoutDTO
+ */
+export class AutoClockoutDTO {
+    /**
+     * Value enable setting
+     *
+     * @type {boolean}
+     * @memberof AutoClockoutDTO
+     */
+    @ApiModelProperty({ description: 'Values enable', example: false })
+    @IsBoolean()
+    value: boolean;
+
+    /**
+     * Range in meter
+     *
+     * @type {number}
+     * @memberof AutoClockoutDTO
+     */
+    @ApiModelProperty({ description: 'Range in meter', enum: [500, 1000, 1500, 2000] })
+    @IsNumber()
+    range: number;
+}
 
 /**
  * Properties data details
@@ -63,6 +91,17 @@ export class PropertiesDetailDTO {
     @ApiModelProperty({ description: 'Geofence filter', example: true })
     @IsBoolean()
     geofence_filter: boolean;
+
+    /**
+     * Autoclockout filter
+     *
+     * @type {AutoClockoutDTO}
+     * @memberof PropertiesDetailDTO
+     */
+    @ApiModelProperty({ description: 'Autoclock filter', type: AutoClockoutDTO })
+    @IsNotEmpty()
+    @Type(() => AutoClockoutDTO)
+    autoclockout_filter: AutoClockoutDTO;
 }
 
 /**
