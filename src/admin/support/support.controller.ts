@@ -15,13 +15,14 @@ export class SupportController {
   @Post()
   @ApiOperation({ title: 'Create support issue' })
   createSupportIssue(@Body() createSupportDTO: CreateSupportDTO, @Req() req, @Res() res) {
-    runCreateService([this.supportService.createSupportIssue([createSupportDTO]), res]);
+    runCreateService([this.supportService.createSupportIssue([createSupportDTO, req.user]), res]);
   }
 
-  @Get()
+  @Get('module/:module')
   @ApiOperation({ title: 'Get support issue list' })
-  getSupportIssue(@Res() res) {
-    runGetServiceV2([this.supportService.getSupportIssue([null]), res]);
+  @ApiImplicitParam({ name: 'module', enum: ['tenant', 'admin'] })
+  getSupportIssue(@Param() param, @Req() req, @Res() res) {
+    runGetServiceV2([this.supportService.getSupportIssue([req.user, param.module]), res]);
   }
 
   @Post('clarification')

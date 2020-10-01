@@ -1,5 +1,6 @@
 export class SupportTicketModel {
   SUPPORT_GUID: string;
+  TENANT_GUID: string;
   USER_GUID: string;
   USER_EMAIL: string;
   REQUEST_TYPE: string;

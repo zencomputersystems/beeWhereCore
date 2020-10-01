@@ -94,10 +94,11 @@ export class SupportService {
     );
   }
 
-  public createSupportIssue([createSupportDto]: [CreateSupportDTO]) {
+  public createSupportIssue([createSupportDto, user]: [CreateSupportDTO, any]) {
     const dataSupport = new SupportTicketModel
 
     dataSupport.SUPPORT_GUID = v1();
+    dataSupport.TENANT_GUID = user.TENANT_GUID;
     this.inputDataSupport([dataSupport, createSupportDto]);
 
     const resource = new Resource(new Array);
@@ -116,10 +117,15 @@ export class SupportService {
   //   this.supportTicketDbService.updateByModel([resource2, [], [], []]).subscribe();
   // }
 
-  public getSupportIssue([data]) {
+  public getSupportIssue([user, moduleSelect]) {
+    // console.log(user.TENANT_GUID);
+    let filter = [];
+    if (moduleSelect == 'admin') {
+      filter = [`(TENANT_GUID=${user.TENANT_GUID})`];
+    }
     return this.userprofileDbService.findByFilterV4([['USER_GUID', 'FULLNAME'], [], null, null, null, [], null]).pipe(
       mergeMap(res1 => {
-        return this.supportTicketDbService.findByFilterV4([[], [], null, null, null, [], null]).pipe(
+        return this.supportTicketDbService.findByFilterV4([[], filter, null, null, null, [], null]).pipe(
           map(res => {
             let results = {};
             res.forEach(x => {
