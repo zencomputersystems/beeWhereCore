@@ -1,10 +1,12 @@
 export class WorkingHourSettingDTO {
   start: string;
   end: string;
+  message: string;
 }
 
 export class CalendarSettingDTO {
   restday: string[];
+  message: string;
 }
 
 export class ProfileSettingDetailDTO {

@@ -69,23 +69,33 @@ export class UserInfoService {
         let workingHourTemp = new WorkingHourSettingDTO;
 
         if (workingHourTime == null) {
-          workingHourTemp = null;
+          // workingHourTemp = null;
+          // workingHourTemp = { message: "There is no working hour profile assigned for this user" } as any;
+          workingHourTemp.start = null;
+          workingHourTemp.end = null;
+          workingHourTemp.message = "There is no working hour profile assigned for this user.";
         }
         else {
-          workingHourTemp.start = workingHourTime['start_time'];
-          workingHourTemp.end = workingHourTime['end_time'];
+          workingHourTemp.start = workingHourTime['start_time'] || null;
+          workingHourTemp.end = workingHourTime['end_time'] || null;
+
+          workingHourTemp.message = workingHourTime['start_time'] == null || workingHourTime['end_time'] == null ? 'There is no fullday work duration assigned in working hour profile setting.' : null;
         }
 
         let calendarTemp = new CalendarSettingDTO;
 
         if (calendarRestDay == null) {
-          calendarTemp = null;
+          // calendarTemp = null;
+          // calendarTemp = { message: "There is no calendar profile assigned for this user" } as any;
+          calendarTemp.restday = [];
+          calendarTemp.message = "There is no calendar profile assigned for this user.";
         } else {
           let restDay = [];
           calendarRestDay.forEach(element => {
             restDay.push(element.fullname.toLowerCase());
           });
           calendarTemp.restday = restDay;
+          calendarTemp.message = calendarTemp.restday.length == 0 ? 'There is no restday assigned in calendar profile setting.' : null;
         }
 
         let profileSetting = new ProfileSettingDetailDTO;
