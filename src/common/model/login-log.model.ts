@@ -7,4 +7,5 @@ export class LoginLogModel {
   ADDRESS: string;
   DEVICE_INFO: string;
   DEVICE_PUBLIC_IP: string;
+  ACTIVITY: string;
 }

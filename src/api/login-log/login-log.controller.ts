@@ -1,49 +1,11 @@
-// 20. to POST track login session
-// Request:
-// {
-//   "userId": "561604d0-f98d-11ea-a922-075dec0319ed",
-//     "loggedTimestamp": 1601622975, //in seconds format
-//       "latitude": 2.9261295000000005,
-//         "longitude": 101.6499236,
-//           "address": "Cyberjaya, Selangor, Malaysia",
-//             "deviceInfo": "Safari 13.0.3 on Apple iPhone (iOS 13.2.3)",
-//               "devicePublicIp": "60.53.219.114"
-// }
-
-import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBearerAuth, ApiImplicitParam, ApiOperation } from "@nestjs/swagger";
 import { CreateLoginLogDTO } from "./dto/create-login-log.dto";
 import { LoginLogService } from './login-log.service';
-import { runCreateService, runGetServiceV2 } from '../../common/helper/basic-function.service';
+import { runCreateService, runGetServiceV2, runUpdateService } from '../../common/helper/basic-function.service';
+import { UpdateLoginLogActivityDTO } from './dto/activity-log.dto';
 
-// Response:
-// {
-//   "loginId": "xxxx"
-// }
-
-// 21. to get historical logged on session by user
-// Request:
-// {
-//   "userId": "561604d0-f98d-11ea-a922-075dec0319ed",
-// }
-
-// Response:
-// [
-//   {
-//     "loginId": "xxxx1",
-//     "userId": "561604d0-f98d-11ea-a922-075dec0319ed",
-//     "loginTimestamp": 1601622975, //in seconds format
-//     "latitude": 2.9261295000000005,
-//     "longitude": 101.6499236,
-//     "address": "Cyberjaya, Selangor, Malaysia",
-//     "deviceInfo": "Safari 13.0.3 on Apple iPhone (iOS 13.2.3)",
-//     "devicePublicIp": "60.53.219.114"
-//   },
-//     .
-//     .
-//     .
-// ]
 
 @Controller('api/login-log')
 @UseGuards(AuthGuard('jwt'))
@@ -55,14 +17,6 @@ export class LoginLogController {
   @ApiOperation({ title: 'Create login log' })
   createLoginLog(@Body() data: CreateLoginLogDTO, @Req() req, @Res() res) {
     runCreateService([this.loginLogService.createLoginLog([data]), res])
-    //   .subscribe(
-    //     data => {
-    //       console.log(data);
-    //       res.send(data);
-    //     }, err => {
-    //       res.send(err);
-    //     }
-    //   )
   }
 
   @Get(':id')
@@ -70,6 +24,12 @@ export class LoginLogController {
   @ApiImplicitParam({ name: 'id', description: 'User id', required: true })
   getLoginLog(@Param() param, @Req() req, @Res() res) {
     runGetServiceV2([this.loginLogService.getLoginHistory([param.id]), res])
+  }
+
+  @Patch()
+  @ApiOperation({ title: 'Log activity based on login' })
+  loginLogActivity(@Body() activityLogDto: UpdateLoginLogActivityDTO, @Req() req, @Res() res) {
+    runUpdateService([this.loginLogService.updateLoginLogActivity([activityLogDto]), res]);
   }
 
 }
