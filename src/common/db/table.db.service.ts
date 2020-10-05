@@ -331,3 +331,20 @@ export class SupportClarificationDbService extends BaseDBService {
    */
   constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "s_clarification") }
 }
+
+@Injectable()
+export class LoginLogDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof SupportClarificationDbService
+   */
+  public tableDB = 'l_login_log';
+  /**
+   *Creates an instance of UserDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof SupportClarificationDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "l_login_log") }
+}

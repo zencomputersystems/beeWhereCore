@@ -10,6 +10,7 @@ import { ContractModule } from './admin/contract/contract.module';
 import { ClockModule } from './api/clock/clock.module';
 import { UserInfoModule } from './api/user-info/user-info.module';
 import { SupportModule } from './admin/support/support.module';
+import { LoginLogModule } from './api/login-log/login-log.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { SupportModule } from './admin/support/support.module';
     ContractModule,
     ClockModule,
     UserInfoModule,
-    SupportModule
+    SupportModule,
+    LoginLogModule
   ],
   controllers: [AppController],
   providers: [AppService],
