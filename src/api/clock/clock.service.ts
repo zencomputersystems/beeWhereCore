@@ -90,6 +90,7 @@ export class ClockService {
 
     let method = this.clockLogDbService.findByFilterV4([['CLOCK_IN_TIME', 'CLOCK_OUT_TIME', 'ACTIVITY'], [`(USER_GUID=${userId})`, `AND (CLOCK_IN_TIME >= ` + startDate + `)`, `AND (CLOCK_IN_TIME <= ` + endDate + `)`], null, null, null, [], null]);
     return method.pipe(map(res => {
+      // console.log(res);
       let resArr = [];
       for (var i = 0; i <= moment(endDate).diff(startDate, "days"); i++) {
         var startdate = moment(endDate).utc().subtract(i, "days").format("YYYY-MM-DD");
@@ -118,15 +119,17 @@ export class ClockService {
               delete element.CLOCK_OUT_TIME;
               if (element.ACTIVITY != null) {
                 element.ACTIVITY = convertXMLToJson(element.ACTIVITY);
-                element.ACTIVITY = element.ACTIVITY.root.activity;
-                if (element.ACTIVITY.length == undefined) {
-                  let setArr = [];
-                  setArr.push(element.ACTIVITY);
-                  element.ACTIVITY = setArr;
-                }
+                if (element.ACTIVITY.root) {
+                  element.ACTIVITY = element.ACTIVITY.root.activity;
+                  if (element.ACTIVITY.length == undefined) {
+                    let setArr = [];
+                    setArr.push(element.ACTIVITY);
+                    element.ACTIVITY = setArr;
+                  }
 
-                if (element.ACTIVITY != undefined) {
-                  activityArr.push(element.ACTIVITY);
+                  if (element.ACTIVITY != undefined) {
+                    activityArr.push(element.ACTIVITY);
+                  }
                 }
               } else {
                 delete element.ACTIVITY;
