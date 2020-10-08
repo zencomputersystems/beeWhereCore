@@ -7,6 +7,7 @@ import { CreateLoginLogDTO } from "./dto/create-login-log.dto";
 import { v1 } from 'uuid';
 import { UpdateLoginLogActivityDTO } from './dto/activity-log.dto';
 import { map, mergeMap } from "rxjs/operators";
+import moment = require("moment");
 var { convertXMLToJson, convertJsonToXML } = require('@zencloudservices/xmlparser');
 
 @Injectable()
@@ -16,7 +17,7 @@ export class LoginLogService {
     let model = new LoginLogModel;
     model.LOGIN_LOG_GUID = v1();
     model.USER_GUID = data.userId;
-    model.LOGGED_TIMESTAMP = data.loggedTimestamp;
+    model.LOGGED_TIMESTAMP = moment.unix(data.loggedTimestamp).format('YYYY-MM-DD HH:mm:ss').toString();
     model.LATITUDE = data.latitude;
     model.LONGITUDE = data.longitude;
     model.ADDRESS = data.address;
@@ -54,6 +55,7 @@ export class LoginLogService {
         // no activity yet
         if (res[0].ACTIVITY == null) {
           activityLogDto.activities.forEach(element => {
+            element.timestamp = moment.unix(element.timestamp).format('YYYY-MM-DD HH:mm:ss').toString()
             activityArrUpdated.push(element)
           });
 
@@ -66,6 +68,7 @@ export class LoginLogService {
             // single activity will not in array
             activityArrUpdated = activityArrExisting;
             activityLogDto.activities.forEach(element => {
+              element.timestamp = moment.unix(element.timestamp).format('YYYY-MM-DD HH:mm:ss').toString()
               activityArrUpdated.push(element)
             });
           }
@@ -73,6 +76,7 @@ export class LoginLogService {
             // activity in array. need to push to existing array
             activityArrUpdated.push(activityArrExisting);
             activityLogDto.activities.forEach(element => {
+              element.timestamp = moment.unix(element.timestamp).format('YYYY-MM-DD HH:mm:ss').toString()
               activityArrUpdated.push(element)
             });
 

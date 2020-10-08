@@ -1,5 +1,5 @@
 import { ApiModelProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateLoginLogDTO {
   @ApiModelProperty({ description: 'User id', example: '561604d0-f98d-11ea-a922-075dec0319ed' })
@@ -9,8 +9,8 @@ export class CreateLoginLogDTO {
 
   @ApiModelProperty({ description: 'Log timestamp', example: '1601622975' })
   @IsNotEmpty()
-  @IsString()
-  loggedTimestamp: string;// 1601622975, //in seconds format
+  @IsNumber()
+  loggedTimestamp: number;// 1601622975, //in seconds format
 
   @ApiModelProperty({ description: 'Latitude', example: '2.9261295000000005' })
   @IsNotEmpty()

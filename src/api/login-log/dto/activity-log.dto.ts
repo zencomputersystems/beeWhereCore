@@ -1,13 +1,12 @@
 import { ApiModelProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { Type } from 'class-transformer';
 import { type } from 'os';
 
 export class LoginLogActivityDTO {
   @ApiModelProperty({ description: 'Timestamp in seconds', example: '1601622975' })
   @IsNotEmpty()
-  @IsString()
-  timestamp: string;
+  timestamp: any;
 
   @ApiModelProperty({ description: 'Activity', example: 'login' })
   @IsNotEmpty()
