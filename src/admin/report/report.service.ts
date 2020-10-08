@@ -3,7 +3,9 @@ import moment = require("moment");
 import { of } from "rxjs";
 import { map } from "rxjs/operators";
 import { ClockLogDbService } from "../../common/db/table.db.service";
-import { AttendanceDetailsDTO, ResultAttendanceDTO } from './dto/result-attendance.dto';
+import { ActivityDetailDTO, AttendanceDetailsDTO, ResultActivityDTO, ResultAttendanceDTO } from './dto/result-attendance.dto';
+
+var { convertXMLToJson } = require('@zencloudservices/xmlparser');
 
 @Injectable()
 export class ReportService {
@@ -62,4 +64,85 @@ export class ReportService {
     );
 
   }
+
+  public getActivityList([data]) {
+    if (data.category == 'project') {
+      let filter = [`(PROJECT_ID IN (${data.input}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`];
+      return this.getActivityDetails([filter]);
+    }
+    else if (data.category == 'contract') {
+      let filter = [`(CONTRACT_ID IN (${data.input}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`];
+      return this.getActivityDetails([filter])
+    }
+    else if (data.category == 'user') {
+      let filter = [`(USER_GUID IN (${data.input}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`];
+      return this.getActivityDetails([filter])
+    }
+    else { return of(data) }
+  }
+
+  public getActivityDetails([filters]) {
+    return this.clockLogDbService.findByFilterV4([[], filters, null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA'], null]).pipe(
+      map(res => {
+        const userArr = [...new Set(res.map(item => item.USER_GUID))];
+
+        let finalArr = [];
+        userArr.forEach(userguid => {
+          let userData = res.filter(x => x.USER_GUID === userguid);
+          if (userData.length > 0) {
+            let dataRes = new ResultActivityDTO;
+            let userInfo = userData[0].USER_DATA;
+            dataRes.userGuid = userInfo.USER_GUID;
+            dataRes.employeeNo = userInfo.STAFF_ID;
+            dataRes.employeeName = userInfo.FULLNAME;
+            dataRes.designation = userInfo.DESIGNATION;
+            dataRes.companyName = userInfo.COMPANY_NAME;
+            dataRes.department = userInfo.DEPARTMENT;
+            let activityArr = [];
+            userData.forEach(activityData => {
+              let dataActivity = new ActivityDetailDTO;
+
+              if (activityData.ACTIVITY) {
+                let activityList = convertXMLToJson(activityData.ACTIVITY);
+                if (activityList.root) {
+
+                  dataActivity.date = activityData.CLOCK_IN_TIME;
+                  dataActivity.completed = [];
+                  dataActivity.pending = [];
+
+                  if (activityList.root.activity.length == undefined) {
+                    if (activityList.root.activity.statusFlag) {
+                      dataActivity.completed.push(activityList.root.activity.name);
+                    } else {
+                      if (activityList.root.activity.name)
+                        dataActivity.pending.push(activityList.root.activity.name);
+                    }
+
+                  } else {
+                    activityList.root.activity.forEach(element => {
+                      if (element.statusFlag) {
+                        dataActivity.completed.push(element.name);
+                      } else {
+                        if (element.name)
+                          dataActivity.pending.push(element.name);
+                      }
+                    });
+                  }
+
+                  if (dataActivity.completed.length > 0 || dataActivity.pending.length > 0)
+                    activityArr.push(dataActivity);
+                }
+              }
+            });
+            dataRes.activity = activityArr;
+            if (dataRes.activity.length > 0)
+              finalArr.push(dataRes);
+          }
+        });
+        return finalArr;
+
+      })
+    );
+  }
+
 }

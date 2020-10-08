@@ -19,4 +19,15 @@ export class ReportController {
     runGetServiceV2([this.reportService.getReportListAttendance([param]), res]);
   }
 
+  @Get('activity/:startdate/:enddate/:category/:input')
+  @ApiOperation({ title: 'Activity report' })
+  @ApiImplicitParam({ name: 'startdate', description: 'Start date', required: true })
+  @ApiImplicitParam({ name: 'enddate', description: 'End date', required: true })
+  @ApiImplicitParam({ name: 'category', description: 'Category', required: true, enum: ['project', 'contract', 'user'] })
+  @ApiImplicitParam({ name: 'input', description: 'Input', required: true })
+  getActivityReport(@Param() param, @Req() req, @Res() res) {
+    runGetServiceV2([this.reportService.getActivityList([param]), res]);
+  }
+
+
 }
