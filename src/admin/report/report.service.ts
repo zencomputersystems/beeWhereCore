@@ -38,8 +38,9 @@ export class ReportService {
               dataAttndnce.clock_in_time = attndnceData.CLOCK_IN_TIME;
               dataAttndnce.address_in = attndnceData.ADDRESS_IN;
               dataAttndnce.job_type_in = attndnceData.JOB_TYPE;
-              dataAttndnce.project_code_in = attndnceData.PROJECT_DATA.CODE;
-              dataAttndnce.contract_code_in = attndnceData.CONTRACT_DATA.CODE;
+
+              dataAttndnce.project_code_in = attndnceData.PROJECT_DATA.SOC_NO ? attndnceData.PROJECT_DATA.SOC_NO : null;
+              dataAttndnce.contract_code_in = attndnceData.CONTRACT_DATA.CONTRACT_NO ? attndnceData.CONTRACT_DATA.CONTRACT_NO : null;
               dataAttndnce.clock_out_time = attndnceData.CLOCK_OUT_TIME;
               dataAttndnce.address_out = attndnceData.ADDRESS_OUT;
 
