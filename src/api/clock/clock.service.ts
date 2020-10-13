@@ -16,9 +16,10 @@ var { convertJsonToXML, convertXMLToJson } = require('@zencloudservices/xmlparse
 @Injectable()
 export class ClockService {
   constructor(private readonly clockLogDbService: ClockLogDbService) { }
-  public clockInProcess([createClockDTO]: [CreateClockDTO]) {
+  public clockInProcess([createClockDTO, user]: [CreateClockDTO, any]) {
     let model = new ClockLogModel;
     model.CLOCK_LOG_GUID = v1();
+    model.TENANT_GUID = user.TENANT_GUID;
     model.USER_GUID = createClockDTO.userGuid;
     model.JOB_TYPE = createClockDTO.jobType;
     model.LATITUDE_IN = createClockDTO.location.lat;

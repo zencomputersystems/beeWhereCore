@@ -15,8 +15,8 @@ export class ClockController {
 
   @Post()
   @ApiOperation({ title: 'Clock in', description: 'Clock in user' })
-  clockIn(@Body() createClockDTO: CreateClockDTO, @Res() res) {
-    runCreateService([this.clockService.clockInProcess([createClockDTO]), res]);
+  clockIn(@Req() req, @Body() createClockDTO: CreateClockDTO, @Res() res) {
+    runCreateService([this.clockService.clockInProcess([createClockDTO, req.user]), res]);
   }
 
   @Patch()

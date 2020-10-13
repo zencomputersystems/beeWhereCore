@@ -10,7 +10,7 @@ var { convertXMLToJson } = require('@zencloudservices/xmlparser');
 @Injectable()
 export class ReportService {
   constructor(private readonly clockLogDbService: ClockLogDbService) { }
-  public getReportListAttendance([data]) {
+  public getReportListAttendance([data, user]) {
     const userArr = data.userid.split(',');
     // console.log(userArr);
 
@@ -19,7 +19,7 @@ export class ReportService {
     // console.log(userArr[1]); // Outputs: John
     // console.log(userArr[userArr.length - 1]); // Outputs: Alice
 
-    return this.clockLogDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA'], null]).pipe(
+    return this.clockLogDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`, , `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA'], null]).pipe(
       map(res => {
 
         let finalArr = [];
@@ -71,17 +71,17 @@ export class ReportService {
 
   }
 
-  public getActivityList([data]) {
+  public getActivityList([data, user]) {
     if (data.category == 'project') {
-      let filter = [`(PROJECT_ID IN (${data.input}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`];
+      let filter = [`(PROJECT_ID IN (${data.input}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`, `AND (TENANT_GUID = ${user.TENANT_GUID})`];
       return this.getActivityDetails([filter]);
     }
     else if (data.category == 'contract') {
-      let filter = [`(CONTRACT_ID IN (${data.input}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`];
+      let filter = [`(CONTRACT_ID IN (${data.input}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`, `AND (TENANT_GUID = ${user.TENANT_GUID})`];
       return this.getActivityDetails([filter])
     }
     else if (data.category == 'user') {
-      let filter = [`(USER_GUID IN (${data.input}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`];
+      let filter = [`(USER_GUID IN (${data.input}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`, `AND (TENANT_GUID = ${user.TENANT_GUID})`];
       return this.getActivityDetails([filter])
     }
     else { return of(data) }
@@ -113,6 +113,9 @@ export class ReportService {
                 if (activityList.root) {
 
                   dataActivity.date = activityData.CLOCK_IN_TIME;
+                  dataActivity.project_code_in = activityData.PROJECT_DATA.SOC_NO ? activityData.PROJECT_DATA.SOC_NO : null;;
+                  dataActivity.contract_code_in = activityData.CONTRACT_DATA.CONTRACT_NO ? activityData.CONTRACT_DATA.CONTRACT_NO : null;
+
                   dataActivity.completed = [];
                   dataActivity.pending = [];
 

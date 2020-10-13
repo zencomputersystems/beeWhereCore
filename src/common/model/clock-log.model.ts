@@ -1,5 +1,6 @@
 export class ClockLogModel {
   CLOCK_LOG_GUID: string;
+  TENANT_GUID: string;
   USER_GUID: string;
   JOB_TYPE: string;
   LATITUDE_IN: number;

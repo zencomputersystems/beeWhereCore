@@ -1,5 +1,7 @@
 export class ActivityDetailDTO {
   date: string;
+  project_code_in: string;
+  contract_code_in: string;
   completed: string[];
   pending: string[];
 }
