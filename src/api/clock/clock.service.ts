@@ -161,6 +161,12 @@ export class ClockService {
           element.ACTIVITY = convertXMLToJson(element.ACTIVITY);
         }
       });
+
+      res = res.sort(function (a, b) {
+        var c = new Date(a.CLOCK_IN_TIME) as any;
+        var d = new Date(b.CLOCK_IN_TIME) as any;
+        return d - c;
+      });
       return res;
     }));
   }
