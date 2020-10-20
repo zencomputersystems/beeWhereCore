@@ -29,10 +29,11 @@ export class ClientService {
     private readonly locationService: LocationService
   ) { }
 
-  public createClient([clientData, req]: [CreateClientDTO, UserMainModel]) {
+  public createClient([clientData, req]: [CreateClientDTO, any]) {
     const dataClient = new ClientProfileModel();
 
     dataClient.CLIENT_GUID = v1();
+    dataClient.TENANT_GUID = req.user.TENANT_GUID;
     const clientId = dataClient.CLIENT_GUID;
     this.inputDataClient([dataClient, clientData]);
 
@@ -158,10 +159,10 @@ export class ClientService {
     }
   }
 
-  public getClient([type]: [string]) {
+  public getClient([type, req]: [string, any]) {
     let method;
     if (type == 'detail') {
-      let url = this.clientProfileDbService.queryService.generateDbQueryV3(['a_client_profile', ['CLIENT_GUID', 'NAME', 'ABBR'], [`(STATUS=1)`], null, null, null, ['LOCATION_DATA', 'CONTRACT_DATA', 'PROJECT_DATA'], null]);
+      let url = this.clientProfileDbService.queryService.generateDbQueryV3(['a_client_profile', ['CLIENT_GUID', 'NAME', 'ABBR'], [`(STATUS=1)`, `AND (TENANT_GUID=${req.user.TENANT_GUID})`], null, null, null, ['LOCATION_DATA', 'CONTRACT_DATA', 'PROJECT_DATA'], null]);
 
       const projectFieldUrl = '&PROJECT_DATA.fields=PROJECT_GUID,NAME,SOC_NO,DESCRIPTION,STATUS';
       const locationFieldUrl = '&LOCATION_DATA.fields=LOCATION_GUID,LATITUDE,LONGITUDE,ADDRESS,STATUS';
@@ -187,7 +188,7 @@ export class ClientService {
         )
 
     } else {
-      method = this.clientProfileDbService.findByFilterV4([['CLIENT_GUID', 'NAME', 'ABBR'], [`(STATUS=1)`], null, null, null, [], null]);
+      method = this.clientProfileDbService.findByFilterV4([['CLIENT_GUID', 'NAME', 'ABBR'], [`(STATUS=1)`, `AND (TENANT_GUID=${req.user.TENANT_GUID})`], null, null, null, [], null]);
     }
     return method;
   }

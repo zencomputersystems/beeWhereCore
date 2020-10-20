@@ -28,8 +28,8 @@ export class ClientController {
   @Get(':type')
   @ApiOperation({ title: 'Get client', description: 'Get client' })
   @ApiImplicitParam({ name: 'type', description: 'simple or detail', enum: ['simple', 'detail'], required: true })
-  findClient(@Param('type') type, @Res() res) {
-    runGetServiceV2([this.clientService.getClient([type]), res])
+  findClient(@Param('type') type, @Req() req, @Res() res) {
+    runGetServiceV2([this.clientService.getClient([type, req]), res])
   }
 
   @Get('coordinate/:latitude/:longitude')
