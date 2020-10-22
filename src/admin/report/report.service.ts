@@ -58,7 +58,7 @@ export class ReportService {
             attndnceArr.sort(function (a, b) {
               var c = new Date(a.clock_in_time) as any;
               var d = new Date(b.clock_in_time) as any;
-              return d - c;
+              return c - d;
             });
 
             dataRes.attendance = attndnceArr;
@@ -146,7 +146,7 @@ export class ReportService {
             activityArr.sort(function (a, b) {
               var c = new Date(a.date) as any;
               var d = new Date(b.date) as any;
-              return d - c;
+              return c - d;
             });
             dataRes.activity = activityArr;
             if (dataRes.activity.length > 0)
