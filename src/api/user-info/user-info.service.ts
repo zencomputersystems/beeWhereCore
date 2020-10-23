@@ -91,6 +91,7 @@ export class UserInfoService {
           calendarTemp.message = "There is no calendar profile assigned for this user.";
         } else {
           let restDay = [];
+          calendarRestDay = Array.isArray(calendarRestDay) ? calendarRestDay : [calendarRestDay];
           calendarRestDay.forEach(element => {
             restDay.push(element.fullname.toLowerCase());
           });
