@@ -40,7 +40,7 @@ export class LocationController {
   @ApiOperation({ title: 'Get search Location', description: 'Get search Location' })
   @ApiImplicitParam({ name: 'input', description: 'Search input', required: true })
   searchLocation(@Param('input') input, @Req() req, @Res() res) {
-    let method = `/place/autocomplete/json?input=${input}`;
+    let method = `/place/autocomplete/json?radius=500&components=country:MY&input=${input}`;
     this.googleApiProcess([method, res]);
   }
 
