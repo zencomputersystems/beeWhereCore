@@ -182,13 +182,17 @@ export class ClientService {
                 element.CONTRACT_DATA.forEach(x => { delete x.STATUS; });
                 element.LOCATION_DATA.forEach(x => { delete x.STATUS; });
               });
-              return res.data.resource;
+              return res.data.resource.sort((a, b) => 0 - (a.NAME > b.NAME ? -1 : 1));;
             }
           })
         )
 
     } else {
-      method = this.clientProfileDbService.findByFilterV4([['CLIENT_GUID', 'NAME', 'ABBR'], [`(STATUS=1)`, `AND (TENANT_GUID=${req.user.TENANT_GUID})`], null, null, null, [], null]);
+      method = this.clientProfileDbService.findByFilterV4([['CLIENT_GUID', 'NAME', 'ABBR'], [`(STATUS=1)`, `AND (TENANT_GUID=${req.user.TENANT_GUID})`], null, null, null, [], null]).pipe(
+        map(res => {
+          return res.sort((a, b) => 0 - (a.NAME > b.NAME ? -1 : 1));
+        })
+      );
     }
     return method;
   }
