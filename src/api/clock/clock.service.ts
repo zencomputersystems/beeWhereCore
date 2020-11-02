@@ -160,6 +160,9 @@ export class ClockService {
         if (element.ACTIVITY != null) {
           element.ACTIVITY = convertXMLToJson(element.ACTIVITY);
         }
+        element.CLOCK_IN_TIME = element.CLOCK_IN_TIME != null ? moment(element.CLOCK_IN_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
+        element.CLOCK_OUT_TIME = element.CLOCK_OUT_TIME != null ? moment(element.CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
+
       });
 
       res = res.sort(function (a, b) {
