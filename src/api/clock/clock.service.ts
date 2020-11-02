@@ -139,8 +139,8 @@ export class ClockService {
             }
           });
           if (params.type == 'attendance') {
-            dataTemp['inTime'] = previousInDate;
-            dataTemp['outTime'] = previousOutDate;
+            dataTemp['inTime'] = previousInDate != null ? moment(previousInDate).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
+            dataTemp['outTime'] = previousOutDate != null ? moment(previousOutDate).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
             dataTemp['duration'] = moment(previousOutDate).utc().diff(previousInDate, "hours");
           }
           if (params.type == 'activity') {
