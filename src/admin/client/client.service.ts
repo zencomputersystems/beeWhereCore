@@ -46,20 +46,29 @@ export class ClientService {
 
     return this.clientProfileDbService.createByModel([resource, [], [], []]).pipe(
       mergeMap(res => {
-
-        const resource2 = new Resource(new Array);
-        this.inputDataLocation([clientData, resource2, clientId]);
-        return this.clientLocationDbService.createByModel([resource2, [], [], []]);
+        if (clientData.location.length > 0) {
+          const resource2 = new Resource(new Array);
+          this.inputDataLocation([clientData, resource2, clientId]);
+          return this.clientLocationDbService.createByModel([resource2, [], [], []]);
+        } else {
+          return of(res);
+        }
       }), mergeMap(res => {
-
-        const resource3 = new Resource(new Array);
-        this.inputDataProject([clientData, resource3, clientId]);
-        return this.clientProjectDbService.createByModel([resource3, [], [], []])
+        if (clientData.project.length > 0) {
+          const resource3 = new Resource(new Array);
+          this.inputDataProject([clientData, resource3, clientId]);
+          return this.clientProjectDbService.createByModel([resource3, [], [], []])
+        } else {
+          return of(res);
+        }
       }), mergeMap(res => {
-
-        const resource4 = new Resource(new Array);
-        this.inputDataContract([clientData, resource4, clientId]);
-        return this.clientContractDbService.createByModel([resource4, [], [], []])
+        if (clientData.contract.length > 0) {
+          const resource4 = new Resource(new Array);
+          this.inputDataContract([clientData, resource4, clientId]);
+          return this.clientContractDbService.createByModel([resource4, [], [], []])
+        } else {
+          return of(res);
+        }
       })
     );
   }
