@@ -54,6 +54,9 @@ export class ClockService {
         if (res[0].ACTIVITY != null) {
           res[0].ACTIVITY = convertXMLToJson(res[0].ACTIVITY);
         }
+        res[0].CLOCK_IN_TIME = res[0].CLOCK_IN_TIME != null ? moment(res[0].CLOCK_IN_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
+        res[0].CLOCK_OUT_TIME = res[0].CLOCK_OUT_TIME != null ? moment(res[0].CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
+
         return res;
       })
     );

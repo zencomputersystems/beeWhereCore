@@ -48,8 +48,8 @@ export class ClockController {
   @Get('history/:type/:startdate/:enddate')
   @ApiOperation({ title: 'Get history clock', description: 'Get history clock' })
   @ApiImplicitParam({ name: 'type', description: 'Report type', required: true, enum: ['attendance', 'activity'] })
-  @ApiImplicitParam({ name: 'startdate', description: 'Start date', required: true })
-  @ApiImplicitParam({ name: 'enddate', description: 'End date', required: true })
+  @ApiImplicitParam({ name: 'startdate', description: 'Start date e.g: 1604016000', required: true })
+  @ApiImplicitParam({ name: 'enddate', description: 'End date e.g: 1604966400', required: true })
   findHistory(@Param() params, @Req() req, @Res() res) {
     runGetServiceV2([this.clockService.getHistoryClock([req.user.USER_GUID, params]), res]);
   }

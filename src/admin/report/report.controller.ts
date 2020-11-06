@@ -12,8 +12,8 @@ export class ReportController {
 
   @Get('attendance/:startdate/:enddate/:userid')
   @ApiOperation({ title: 'Attendance report' })
-  @ApiImplicitParam({ name: 'startdate', description: 'Start date', required: true })
-  @ApiImplicitParam({ name: 'enddate', description: 'End date', required: true })
+  @ApiImplicitParam({ name: 'startdate', description: 'Start date e.g: 2020-10-20', required: true })
+  @ApiImplicitParam({ name: 'enddate', description: 'End date e.g: 2020-11-20', required: true })
   @ApiImplicitParam({ name: 'userid', description: 'User id', required: true })
   getAttendanceReport(@Param() param, @Req() req, @Res() res) {
     runGetServiceV2([this.reportService.getReportListAttendance([param, req.user]), res]);
@@ -21,8 +21,8 @@ export class ReportController {
 
   @Get('activity/:startdate/:enddate/:category/:input')
   @ApiOperation({ title: 'Activity report' })
-  @ApiImplicitParam({ name: 'startdate', description: 'Start date', required: true })
-  @ApiImplicitParam({ name: 'enddate', description: 'End date', required: true })
+  @ApiImplicitParam({ name: 'startdate', description: 'Start date e.g 2020-10-20', required: true })
+  @ApiImplicitParam({ name: 'enddate', description: 'End date e.g 2020-11-20', required: true })
   @ApiImplicitParam({ name: 'category', description: 'Category', required: true, enum: ['project', 'contract', 'user'] })
   @ApiImplicitParam({ name: 'input', description: 'Input', required: true })
   getActivityReport(@Param() param, @Req() req, @Res() res) {
