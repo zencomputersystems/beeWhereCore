@@ -16,5 +16,7 @@ export class UpdateClockDTO {
   @IsNotEmpty()
   @Type(() => LatLongDTO)
   location: LatLongDTO;
-
+  @ApiModelProperty({ description: 'User agent', example: 'abc' })
+  @IsString()
+  userAgent: string;
 }
