@@ -102,6 +102,16 @@ export class PropertiesDetailDTO {
     @IsNotEmpty()
     @Type(() => AutoClockoutDTO)
     autoclockout_filter: AutoClockoutDTO;
+
+    /**
+     * Clock location
+     *
+     * @type {boolean}
+     * @memberof PropertiesDetailDTO
+     */
+    @ApiModelProperty({ description: 'Clock location', example: true })
+    @IsBoolean()
+    clockLocation: boolean;
 }
 
 /**

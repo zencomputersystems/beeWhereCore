@@ -48,6 +48,5 @@ export class CreateClockDTO {
   @IsString()
   contractId: string;
   @ApiModelProperty({ description: 'User agent', example: 'abc' })
-  @IsString()
   userAgent: string;
 }
