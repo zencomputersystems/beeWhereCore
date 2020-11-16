@@ -19,7 +19,7 @@ export class ReportService {
     // console.log(userArr[1]); // Outputs: John
     // console.log(userArr[userArr.length - 1]); // Outputs: Alice
 
-    return this.clockLogDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`, , `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA'], null]).pipe(
+    return this.clockLogDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CLOCK_IN_TIME >= ` + data.startdate + `)`, `AND (CLOCK_IN_TIME <= ` + data.enddate + `)`, , `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]).pipe(
       map(res => {
 
         let finalArr = [];
@@ -41,7 +41,7 @@ export class ReportService {
 
               dataAttndnce.address_in = attndnceData.ADDRESS_IN;
               dataAttndnce.job_type_in = attndnceData.JOB_TYPE;
-
+              dataAttndnce.client_name = attndnceData.CLIENT_DATA.NAME ? attndnceData.CLIENT_DATA.NAME : null;
               dataAttndnce.project_code_in = attndnceData.PROJECT_DATA.SOC_NO ? attndnceData.PROJECT_DATA.SOC_NO : null;
               dataAttndnce.contract_code_in = attndnceData.CONTRACT_DATA.CONTRACT_NO ? attndnceData.CONTRACT_DATA.CONTRACT_NO : null;
               dataAttndnce.clock_out_time = attndnceData.CLOCK_OUT_TIME != null ? moment(attndnceData.CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
