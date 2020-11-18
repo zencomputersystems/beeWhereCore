@@ -35,6 +35,9 @@ export class ReportService {
             dataRes.companyName = userInfo.COMPANY_NAME;
             dataRes.department = userInfo.DEPARTMENT;
             let attndnceArr = [];
+            let prevDate;
+            let clockInTemp;
+            let clockOutTemp;
             userData.forEach(attndnceData => {
               let dataAttndnce = new AttendanceDetailsDTO;
               dataAttndnce.clock_in_time = attndnceData.CLOCK_IN_TIME != null ? moment(attndnceData.CLOCK_IN_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
@@ -53,7 +56,7 @@ export class ReportService {
               let duration = moment.duration(clockout.diff(clockin));
               let period = moment.utc(duration.asMilliseconds()).format('HH:mm');
 
-              dataAttndnce.total_hrs = period != 'Invalid date' ? period : null;
+              dataAttndnce.hours = period != 'Invalid date' ? period : null;
 
               attndnceArr.push(dataAttndnce);
             });
@@ -61,6 +64,27 @@ export class ReportService {
               var c = new Date(a.clock_in_time) as any;
               var d = new Date(b.clock_in_time) as any;
               return c - d;
+            });
+
+            attndnceArr.forEach(dataAttndnce => {
+              if (prevDate != moment(dataAttndnce.clock_in_time, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD'))
+                clockInTemp = dataAttndnce.clock_in_time;
+              if (prevDate == moment(dataAttndnce.clock_in_time, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD')) {
+                clockOutTemp = dataAttndnce.clock_out_time;
+
+                let clockout = moment(clockOutTemp, 'YYYY-MM-DD HH:mm:ss');
+                let clockin = moment(clockInTemp, 'YYYY-MM-DD HH:mm:ss');
+                let duration = moment.duration(clockout.diff(clockin));
+                let period = moment.utc(duration.asMilliseconds()).format('HH:mm');
+
+                dataAttndnce.total_hrs = (moment(dataAttndnce.total_hrs || '00:00', 'HH:mm').add(period).format('HH:mm')).toString();
+              }
+              else {
+                dataAttndnce.total_hrs = dataAttndnce.hours;
+              }
+
+              prevDate = moment(dataAttndnce.clock_in_time, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
+
             });
 
             dataRes.attendance = attndnceArr;

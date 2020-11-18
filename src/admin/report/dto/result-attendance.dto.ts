@@ -15,6 +15,7 @@ export class AttendanceDetailsDTO {
   contract_code_in: string;// "",
   clock_out_time: string;// "2020-09-30 10:34:43",
   address_out: string;// "2, Persiara Flora 6, 63000 Cyberjaya, Selangor",
+  hours: string;
   total_hrs: string;// 1
 }
 
