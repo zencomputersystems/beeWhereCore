@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber } from "class-validator";
+import { IsNotEmpty, IsString, IsNumber, IsOptional } from "class-validator";
 import { ApiModelProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 
@@ -16,6 +16,21 @@ export class LatLongDTO {
   @IsString()
   name: string;
 
+}
+
+export class UserAgentXMLDTO {
+  @ApiModelProperty({ description: 'Description', example: 'Description' })
+  @IsOptional()
+  @IsString()
+  description: string;
+  @ApiModelProperty({ description: 'Public ip', example: 'Public ip' })
+  @IsOptional()
+  @IsString()
+  publicIP: string;
+  @ApiModelProperty({ description: 'Device id', example: 'Device id' })
+  @IsOptional()
+  @IsString()
+  deviceID: string;
 }
 
 export class CreateClockDTO {
@@ -47,6 +62,8 @@ export class CreateClockDTO {
   @IsNotEmpty()
   @IsString()
   contractId: string;
-  @ApiModelProperty({ description: 'User agent', example: 'abc' })
-  userAgent: string;
+  @ApiModelProperty({ description: 'User agent', type: UserAgentXMLDTO })
+  @IsOptional()
+  @Type(() => UserAgentXMLDTO)
+  userAgent: UserAgentXMLDTO;
 }

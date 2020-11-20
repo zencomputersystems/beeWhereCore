@@ -1,6 +1,6 @@
-import { LatLongDTO } from "./create-clock.dto";
+import { LatLongDTO, UserAgentXMLDTO } from "./create-clock.dto";
 import { ApiModelProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { Type } from "class-transformer";
 
 export class UpdateClockDTO {
@@ -16,6 +16,8 @@ export class UpdateClockDTO {
   @IsNotEmpty()
   @Type(() => LatLongDTO)
   location: LatLongDTO;
-  @ApiModelProperty({ description: 'User agent', example: 'abc' })
-  userAgent: string;
+  @ApiModelProperty({ description: 'User agent', type: UserAgentXMLDTO })
+  @IsOptional()
+  @Type(() => UserAgentXMLDTO)
+  userAgent: UserAgentXMLDTO;
 }

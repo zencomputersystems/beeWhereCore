@@ -25,7 +25,7 @@ export class ClockService {
     model.LATITUDE_IN = createClockDTO.location.lat;
     model.LONGITUDE_IN = createClockDTO.location.long;
     model.ADDRESS_IN = createClockDTO.location.name;
-    model.USER_AGENT_IN = createClockDTO.userAgent;
+    model.USER_AGENT_IN = createClockDTO.userAgent ? convertJsonToXML(createClockDTO.userAgent) : null;
     model.CLIENT_ID = createClockDTO.clientId;
     model.PROJECT_ID = createClockDTO.projectId;
     model.CONTRACT_ID = createClockDTO.contractId;
@@ -42,7 +42,7 @@ export class ClockService {
     model.LATITUDE_OUT = updateClockDTO.location.lat;
     model.LONGITUDE_OUT = updateClockDTO.location.long;
     model.ADDRESS_OUT = updateClockDTO.location.name;
-    model.USER_AGENT_OUT = updateClockDTO.userAgent;
+    model.USER_AGENT_OUT = updateClockDTO.userAgent ? convertJsonToXML(updateClockDTO.userAgent) : null;
     model.CLOCK_OUT_TIME = moment.unix(updateClockDTO.clockTime).format('YYYY-MM-DD HH:mm:ss').toString();
 
     const resource = new Resource(new Array);
