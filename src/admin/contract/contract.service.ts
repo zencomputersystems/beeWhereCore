@@ -6,13 +6,18 @@ import { ClientContractModel } from '../../common/model/client-contract.model';
 import { v1 } from "uuid";
 import { Resource } from "../../common/model/resource.model";
 import { UpdateContractDTO } from "./dto/update-contract.dto";
+import { map } from "rxjs/operators";
 
 @Injectable()
 export class ContractService {
   constructor(private readonly clientContractDbService: ClientContractDbService) { }
   public getAllContract([req]: [any]) {
-    return this.clientContractDbService.findByFilterV4([[], [], null, null, null, [], null])
-    // return of(data);
+    return this.clientContractDbService.findByFilterV4([[], [], null, null, null, ['CLIENT_DATA'], null]).pipe(
+      map(res => {
+        res = res.filter(x => x.CLIENT_DATA.TENANT_GUID === req.user.TENANT_GUID);
+        return res;
+      })
+    )
   }
 
   public getOneContract([clientId]: [string]) {

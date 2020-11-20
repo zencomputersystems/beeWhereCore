@@ -6,12 +6,18 @@ import { ClientProjectModel } from '../../common/model/client-project.model';
 import { v1 } from "uuid";
 import { Resource } from "../../common/model/resource.model";
 import { UpdateProjectDTO } from "./dto/update-project.dto";
+import { map } from "rxjs/operators";
 
 @Injectable()
 export class ProjectService {
   constructor(private readonly clientProjectDbService: ClientProjectDbService) { }
   public getAllProject([req]: [any]) {
-    return this.clientProjectDbService.findByFilterV4([[], [], null, null, null, [], null])
+    return this.clientProjectDbService.findByFilterV4([[], [], null, null, null, ['CLIENT_DATA'], null]).pipe(
+      map(res => {
+        res = res.filter(x => x.CLIENT_DATA.TENANT_GUID === req.user.TENANT_GUID);
+        return res;
+      })
+    )
     // return of(data);
   }
 
