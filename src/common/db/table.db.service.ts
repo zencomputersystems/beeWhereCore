@@ -219,6 +219,23 @@ export class UserinfoDbService extends BaseDBService {
   constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "user_info") }
 }
 
+@Injectable()
+export class AttendanceUploadLogDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof UsereLeaveDbService
+   */
+  public tableDB = 'l_attendance_upload_log';
+  /**
+   *Creates an instance of UserDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof UserDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "l_attendance_upload_log") }
+}
+
 /**
  * DB table : l_working_hours_profile
  *

@@ -12,6 +12,7 @@ import { UserInfoModule } from './api/user-info/user-info.module';
 import { SupportModule } from './admin/support/support.module';
 import { LoginLogModule } from './api/login-log/login-log.module';
 import { ReportModule } from './admin/report/report.module';
+import { ClockImportModule } from './admin/clock-import/clock-import.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { ReportModule } from './admin/report/report.module';
     UserInfoModule,
     SupportModule,
     LoginLogModule,
-    ReportModule
+    ReportModule,
+    ClockImportModule
   ],
   controllers: [AppController],
   providers: [AppService],
