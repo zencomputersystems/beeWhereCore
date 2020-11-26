@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { SupportTicketDbService, UserprofileDbService, SupportClarificationDbService } from "../../common/db/table.db.service";
+import { SupportTicketDbService, UserprofileDbService, SupportClarificationDbService, ClockLogDbService } from "../../common/db/table.db.service";
 import { CreateSupportDTO } from './dto/create-support.dto';
 import { SupportTicketModel } from '../../common/model/support-ticket.model';
 import { v1 } from "uuid";
@@ -10,6 +10,7 @@ import { of } from "rxjs";
 import { SupportClarificationModel } from "../../common/model/support-clarification.model";
 import { CreateClarificationDTO } from "./dto/create-clarification.dto";
 import { CreateAdminClarificationDTO } from "./dto/create-admin-clarification.dto";
+import { ClockLogModel } from '../../common/model/clock-log.model';
 
 @Injectable()
 export class SupportService {
@@ -17,7 +18,8 @@ export class SupportService {
   constructor(
     private readonly supportTicketDbService: SupportTicketDbService,
     private readonly userprofileDbService: UserprofileDbService,
-    private readonly supportClarificationDbService: SupportClarificationDbService
+    private readonly supportClarificationDbService: SupportClarificationDbService,
+    private readonly clockLogDbService: ClockLogDbService
   ) { }
 
   public getClarificationList([supportId]: [string]) {
@@ -75,6 +77,9 @@ export class SupportService {
     dataClarification.SUPPORT_GUID = createAdminClarificationDto.supportId;
     this.inputDataClarification([dataClarification, createAdminClarificationDto]);
     // 0-Pending, 1-Approved, 2-Rejected, 3-Responded
+    if (createAdminClarificationDto.status === 'approved') {
+      this.addClockRequest([createAdminClarificationDto]);
+    }
     dataClarification.STATUS = createAdminClarificationDto.status === 'approved' ? 1 : createAdminClarificationDto.status === 'rejected' ? 2 : 3;
     dataClarification.USER_REPLY = 'admin';
     const resource = new Resource(new Array);
@@ -106,6 +111,30 @@ export class SupportService {
     return this.supportTicketDbService.createByModel([resource, [], [], []]);
   }
 
+  private addClockRequest([data]: [CreateAdminClarificationDTO]) {
+    // console.log(data);
+    this.supportTicketDbService.findByFilterV4([[], [`(SUPPORT_GUID=${data.supportId})`], null, null, null, [], null]).pipe(
+      mergeMap(res => {
+        // console.log(res);
+        let model = new ClockLogModel;
+        let resource = new Resource(new Array);
+        model.CLOCK_LOG_GUID = v1();
+        model.TENANT_GUID = res[0].TENANT_GUID;
+        model.USER_GUID = res[0].USER_GUID;
+        model.CLOCK_IN_TIME = res[0].START_TIME;
+        model.CLOCK_OUT_TIME = res[0].END_TIME;
+        model.SOURCE_ID = 2;
+        resource.resource.push(model);
+        // console.log(resource);
+        return this.clockLogDbService.createByModel([resource, ['*'], [], []]);
+        // return res;
+      })
+    ).subscribe(
+      data => { /*console.log(data.data.resource);*/ },
+      err => { /*console.log(err);*/ }
+    )
+  }
+
   // private updateStatusSupport([supportId, statusId]: [string, number]) {
   //   console.log(supportId + '-' + statusId);
   //   const model = new SupportTicketModel;
@@ -129,6 +158,9 @@ export class SupportService {
           map(res => {
             let results = {};
             res.forEach(x => {
+              x.START_TIME = moment(x.START_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss').toString();
+              x.END_TIME = moment(x.END_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss').toString();
+
               let userFullname = res1.find(y => y.USER_GUID === x.USER_GUID);
               // Add fullname
               if (userFullname != null)

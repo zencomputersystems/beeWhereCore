@@ -101,7 +101,7 @@ export class ClockService {
       for (var i = 0; i <= moment(endDate).diff(startDate, "days"); i++) {
         var startdate = moment(endDate).utc().subtract(i, "days").format("YYYY-MM-DD");
 
-        let temp = res.filter(x => moment(x.CLOCK_IN_TIME).format("YYYY-MM-DD") === startdate);
+        let temp = res.filter(x => moment(x.CLOCK_IN_TIME).add(8, 'hours').format("YYYY-MM-DD") === startdate);
         if (temp.length > 0) {
           // set final structure
           let dataTemp = {};

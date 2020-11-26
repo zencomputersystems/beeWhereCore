@@ -16,5 +16,6 @@ export class ClockLogModel {
   CONTRACT_ID: string;
   CLOCK_IN_TIME: string;
   CLOCK_OUT_TIME: string;
+  SOURCE_ID: number;
   ACTIVITY: string;
 }
