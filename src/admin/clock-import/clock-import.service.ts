@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { of } from "rxjs";
+import { forkJoin, of } from "rxjs";
 import { map, mergeMap } from "rxjs/operators";
 import { Resource } from "../../common/model/resource.model";
 import { AttendanceUploadLogDbService, ClockLogDbService, UserprofileDbService } from "../../common/db/table.db.service";
@@ -63,6 +63,7 @@ export class ClockImportService {
     model.TENANT_GUID = user.TENANT_GUID;
     model.FILENAME = fileInfo.originalname;
     model.SIZE = fileInfo.size;
+    model.CREATION_USER_GUID = user.USER_GUID;
 
     resource.resource.push(model);
     // console.log(resource);
@@ -74,6 +75,22 @@ export class ClockImportService {
   }
 
   public getLogAttendanceUpload([user]) {
-    return this.attendanceUploadLogDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`], null, null, null, [], null]);
+    return this.attendanceUploadLogDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`], null, null, null, [], null]).pipe(
+      mergeMap(res => {
+        let arrayTemp = [];
+        res.forEach(x => {
+          arrayTemp.includes(x.CREATION_USER_GUID) ? null : arrayTemp.push(x.CREATION_USER_GUID);
+        })
+        let userInfo = this.userprofileDbService.findByFilterV4([[], [`(USER_GUID IN (${arrayTemp}))`], null, null, null, [], null]);
+        return forkJoin([of(res), userInfo]);
+      }), map(res => {
+        console.log(res);
+        res[0].forEach(x => {
+          let uploaderName = res[1].find(y => y.USER_GUID === x.CREATION_USER_GUID);
+          x['UPLOADER_NAME'] = uploaderName.FULLNAME;
+        })
+        return res[0];
+      })
+    );
   }
 }
