@@ -81,7 +81,10 @@ export class ClockImportService {
         res.forEach(x => {
           arrayTemp.includes(x.CREATION_USER_GUID) ? null : arrayTemp.push(x.CREATION_USER_GUID);
         })
-        let userInfo = this.userprofileDbService.findByFilterV4([[], [`(USER_GUID IN (${arrayTemp}))`], null, null, null, [], null]);
+        let userInfo = of([])
+        if (arrayTemp.length > 0) {
+          userInfo = this.userprofileDbService.findByFilterV4([[], [`(USER_GUID IN (${arrayTemp}))`], null, null, null, [], null]);
+        }
         return forkJoin([of(res), userInfo]);
       }), map(res => {
         console.log(res);
