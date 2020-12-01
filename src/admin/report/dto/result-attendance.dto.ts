@@ -17,6 +17,8 @@ export class AttendanceDetailsDTO {
   address_out: string;// "2, Persiara Flora 6, 63000 Cyberjaya, Selangor",
   hours: string;
   total_hrs: string;// 1
+  source: string;
+  problem: string;
 }
 
 export class ResultUserDTO {
