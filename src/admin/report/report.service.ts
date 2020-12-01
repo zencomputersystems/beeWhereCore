@@ -142,7 +142,7 @@ export class ReportService {
             let attndnceArr = [];
             // for (var i = -1; i < moment(data.enddate).diff(data.startdate, "days"); i++) {
             // for (var i = -1; moment(data.startdate).diff(data.enddate, "days") < i; i++) {
-            for (var i = 1; i <= (moment(data.enddate).diff(data.startdate, "days") + 1); i++) {
+            for (var i = 0; i <= moment(data.enddate).diff(data.startdate, "days"); i++) {
               // var startdate = moment(data.enddate).utc().subtract(i, "days").format("YYYY-MM-DD");
               var startdate = moment(data.startdate).utc().add(i, "days").format("YYYY-MM-DD");
               let byDate = userData.filter(x => moment(x.CLOCK_IN_TIME).add(8, 'hours').format('YYYY-MM-DD') === startdate || moment(x.CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD') === startdate);
@@ -211,6 +211,21 @@ export class ReportService {
                 return c - d;
               });
 
+              if (resultArray.length == 0) {
+                let dataAttndnce = new AttendanceDetailsDTO;
+                dataAttndnce.clock_in_time = null;
+                dataAttndnce.address_in = null;
+                dataAttndnce.job_type_in = null;
+                dataAttndnce.client_name = null;
+                dataAttndnce.project_code_in = null;
+                dataAttndnce.contract_code_in = null;
+                dataAttndnce.clock_out_time = null;
+                dataAttndnce.address_out = null;
+                dataAttndnce.source = null;
+                dataAttndnce.hours = null;
+
+                resultArray.push(dataAttndnce);
+              }
               arrTemp['attendance'] = resultArray;
               attndnceArr.push(arrTemp);
 
