@@ -261,6 +261,54 @@ export class WorkingHourDbService extends BaseDBService {
 }
 
 /**
+ * DB table : l_main_leave_transaction
+ *
+ * @export
+ * @class LeaveTransactionDbService
+ * @extends {BaseDBService}
+ */
+@Injectable()
+export class LeaveTransactionDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof LeaveTransactionDbService
+   */
+  public tableDB = 'l_main_leave_transaction';
+  /**
+   *Creates an instance of LeaveTransactionDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof LeaveTransactionDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "l_main_leave_transaction") }
+}
+
+/**
+ * DB table : l_main_leavetype
+ *
+ * @export
+ * @class LeaveTypeDbService
+ * @extends {BaseDBService}
+ */
+@Injectable()
+export class LeaveTypeDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof LeaveTypeDbService
+   */
+  public tableDB = 'l_main_leavetype';
+  /**
+   *Creates an instance of LeaveTypeDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof LeaveTypeDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "l_main_leavetype") }
+}
+
+/**
  * DB table : l_calendar_profile
  *
  * @export
