@@ -401,7 +401,8 @@ export class ReportService {
 
               if (leaveTaken != undefined) {
                 let leavetypeInfo = leavetypeList.find(x => x.LEAVE_TYPE_GUID === leaveTaken.LEAVE_TYPE_GUID);
-                arrTemp['problem'] = leavetypeInfo.CODE;
+
+                arrTemp['problem'] = leavetypeInfo != undefined ? leavetypeInfo.CODE : 'Birthday Leave';
               }
 
               resultArray.sort(function (a, b) {
