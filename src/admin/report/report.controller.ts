@@ -11,7 +11,7 @@ import { ReportAttendanceDTO } from "./dto/report-attendance.dto";
 export class ReportController {
   constructor(private readonly reportService: ReportService) { };
 
-  @Post('attendance/:startdate/:enddate/:userid')
+  @Post('attendance')
   @ApiOperation({ title: 'Attendance report' })
   // @ApiImplicitParam({ name: 'startdate', description: 'Start date e.g: 2020-10-20', required: true })
   // @ApiImplicitParam({ name: 'enddate', description: 'End date e.g: 2020-11-20', required: true })

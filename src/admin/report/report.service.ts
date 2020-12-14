@@ -303,7 +303,8 @@ export class ReportService {
           // console.log(calendarDetails);
           // console.log(leaveList);
 
-          let restDay = [...new Set(calendarDetails.rest.map(item => item.fullname))];
+          let calendarRestDay = Array.isArray(calendarDetails.rest) ? calendarDetails.rest : [calendarDetails.rest];
+          let restDay = [...new Set(calendarRestDay.map(item => item.fullname))];
 
           if (userData) {
             let dataRes = new ResultAttendanceDTO;
