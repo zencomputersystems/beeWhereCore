@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBearerAuth, ApiImplicitParam, ApiOperation } from "@nestjs/swagger";
 import { ReportService } from './report.service';
 import { runGetServiceV2 } from '../../common/helper/basic-function.service';
+import { ReportAttendanceDTO } from "./dto/report-attendance.dto";
 
 @Controller('report')
 @UseGuards(AuthGuard('jwt'))
@@ -10,13 +11,15 @@ import { runGetServiceV2 } from '../../common/helper/basic-function.service';
 export class ReportController {
   constructor(private readonly reportService: ReportService) { };
 
-  @Get('attendance/:startdate/:enddate/:userid')
+  @Post('attendance/:startdate/:enddate/:userid')
   @ApiOperation({ title: 'Attendance report' })
-  @ApiImplicitParam({ name: 'startdate', description: 'Start date e.g: 2020-10-20', required: true })
-  @ApiImplicitParam({ name: 'enddate', description: 'End date e.g: 2020-11-20', required: true })
-  @ApiImplicitParam({ name: 'userid', description: 'User id', required: true })
-  getAttendanceReport(@Param() param, @Req() req, @Res() res) {
-    runGetServiceV2([this.reportService.getReportListAttendance([param, req.user]), res]);
+  // @ApiImplicitParam({ name: 'startdate', description: 'Start date e.g: 2020-10-20', required: true })
+  // @ApiImplicitParam({ name: 'enddate', description: 'End date e.g: 2020-11-20', required: true })
+  // @ApiImplicitParam({ name: 'userid', description: 'User id', required: true })
+  // getAttendanceReport(@Body() reportAttendanceDTO: ReportAttendanceDTO, @Param() param, @Req() req, @Res() res) {
+  getAttendanceReport(@Body() reportAttendanceDTO: ReportAttendanceDTO, @Req() req, @Res() res) {
+    // runGetServiceV2([this.reportService.getReportListAttendance([param, req.user]), res]);
+    runGetServiceV2([this.reportService.getReportListAttendance([reportAttendanceDTO, req.user]), res]);
   }
 
   @Get('activity/:startdate/:enddate/:category/:input')

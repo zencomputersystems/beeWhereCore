@@ -273,7 +273,7 @@ export class ReportService {
         // find working hours data details (to check early out, late)
         let workingHoursData = this.workingHourDbService.findByFilterV4([[], [`(WORKING_HOURS_GUID IN (${workingHourIdList}))`], null, null, null, [], null]);
         // get all leave by date (to state user apply leave on that day)
-        let leaveTransactionData = this.leaveTransactionDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`, `AND (USER_GUID IN (${data.userid}))`, `AND (START_DATE >= ${data.startdate})`, `AND (END_DATE <= ${data.enddate})`], null, null, null, [], null]);
+        let leaveTransactionData = this.leaveTransactionDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`, `AND (USER_GUID IN (${data.userid}))`, `AND (START_DATE >= ${data.startdate})`, `AND (END_DATE <= ${data.enddate})`, `AND (STATUS = APPROVED)`], null, null, null, [], null]);
         // get all clock log 
         let clockLogData = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
         // get all leavetype
@@ -324,7 +324,8 @@ export class ReportService {
               // console.log(calendarDetails.rest);
 
               // find leave taken by current looping user
-              let leaveTaken = leaveList.find(x => (x.USER_GUID === userguid && x.START_DATE === startdate));
+              // let leaveTaken = leaveList.find(x => (x.USER_GUID === userguid && x.START_DATE === startdate));
+              let leaveTaken = leaveList.find(x => (x.USER_GUID === userguid && (moment(startdate, 'YYYY-MM-DD').isBetween(x.START_DATE, x.END_DATE) || moment(startdate, 'YYYY-MM-DD').isSame(x.START_DATE) || moment(startdate, 'YYYY-MM-DD').isSame(x.END_DATE))));
 
               let restday = restDay.includes(moment(startdate).format('dddd').toUpperCase()) ? 1 : 0;
               // console.log(restday);
@@ -402,7 +403,8 @@ export class ReportService {
               if (leaveTaken != undefined) {
                 let leavetypeInfo = leavetypeList.find(x => x.LEAVE_TYPE_GUID === leaveTaken.LEAVE_TYPE_GUID);
 
-                arrTemp['problem'] = leavetypeInfo != undefined ? leavetypeInfo.CODE : 'Birthday Leave';
+                // arrTemp['problem'] = leavetypeInfo != undefined ? leavetypeInfo.CODE : 'Birthday Leave';
+                arrTemp['problem'] = leavetypeInfo != undefined ? leavetypeInfo.CODE + (leaveTaken.TIME_SLOT ? ' - ' + leaveTaken.TIME_SLOT : '') : 'Birthday Leave';
               }
 
               resultArray.sort(function (a, b) {
