@@ -163,7 +163,10 @@ export class ClockService {
     return method.pipe(map(res => {
       res.forEach(element => {
         if (element.ACTIVITY != null) {
-          element.ACTIVITY = convertXMLToJson(element.ACTIVITY);
+          let activityData = convertXMLToJson(element.ACTIVITY);
+          element.ACTIVITY = activityData.root == '' ? [] : (Array.isArray(activityData.root.activity) ? activityData.root.activity : [activityData.root.activity]);
+        } else {
+          element.ACTIVITY = [];
         }
         element.CLOCK_IN_TIME = element.CLOCK_IN_TIME != null ? moment(element.CLOCK_IN_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
         element.CLOCK_OUT_TIME = element.CLOCK_OUT_TIME != null ? moment(element.CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
