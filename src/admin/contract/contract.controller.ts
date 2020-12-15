@@ -14,13 +14,13 @@ export class ContractController {
   @Post()
   @ApiOperation({ title: 'Add Contract to client', description: 'Add Contract to client' })
   createContract(@Body() createContractData: CreateContractDTO, @Req() req, @Res() res) {
-    runCreateService([this.ContractService.createContract([createContractData]), res]);
+    runCreateService([this.ContractService.createContract([createContractData, req.user]), res]);
   }
 
   @Patch()
   @ApiOperation({ title: 'Update client Contract', description: 'Update client Contract' })
   updateContract(@Body() updateContractData: UpdateContractDTO, @Req() req, @Res() res) {
-    runUpdateService([this.ContractService.updateContract([updateContractData]), res]);
+    runUpdateService([this.ContractService.updateContract([updateContractData, req.user]), res]);
   }
 
   @Get()

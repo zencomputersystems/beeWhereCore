@@ -26,13 +26,13 @@ export class LocationController {
   @Post()
   @ApiOperation({ title: 'Add Location to client', description: 'Add Location to client' })
   createLocation(@Body() createLocationData: CreateLocationDTO, @Req() req, @Res() res) {
-    runCreateService([this.locationService.createLocation([createLocationData]), res]);
+    runCreateService([this.locationService.createLocation([createLocationData, req.user]), res]);
   }
 
   @Patch()
   @ApiOperation({ title: 'Update client Location', description: 'Update client Location' })
   updateLocation(@Body() updateLocationData: UpdateLocationDTO, @Req() req, @Res() res) {
-    runUpdateService([this.locationService.updateLocation([updateLocationData]), res]);
+    runUpdateService([this.locationService.updateLocation([updateLocationData, req.user]), res]);
   }
 
   @Get()
@@ -103,6 +103,7 @@ export class LocationController {
             model.LATITUDE = element.latitude;
             model.LONGITUDE = element.longitude;
             model.STATUS = 1;
+            model.CREATION_USER_GUID = req.user.USER_GUID;
             resource.resource.push(model);
 
             successList.push(element.client_name);

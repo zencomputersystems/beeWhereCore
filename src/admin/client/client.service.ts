@@ -36,10 +36,10 @@ export class ClientService {
     dataClient.TENANT_GUID = req.user.TENANT_GUID;
     const clientId = dataClient.CLIENT_GUID;
     this.inputDataClient([dataClient, clientData]);
+    dataClient.CREATION_USER_GUID = req.user.USER_GUID;
 
     const resource = new Resource(new Array);
     resource.resource.push(dataClient);
-
     // let createClient = this.clientProfileDbService.createByModel([resource, [], [], []]);
 
 
@@ -48,7 +48,7 @@ export class ClientService {
       mergeMap(res => {
         if (clientData.location.length > 0) {
           const resource2 = new Resource(new Array);
-          this.inputDataLocation([clientData, resource2, clientId]);
+          this.inputDataLocation([clientData, resource2, clientId, req.user]);
           return this.clientLocationDbService.createByModel([resource2, [], [], []]);
         } else {
           return of(res);
@@ -56,7 +56,7 @@ export class ClientService {
       }), mergeMap(res => {
         if (clientData.project.length > 0) {
           const resource3 = new Resource(new Array);
-          this.inputDataProject([clientData, resource3, clientId]);
+          this.inputDataProject([clientData, resource3, clientId, req.user]);
           return this.clientProjectDbService.createByModel([resource3, [], [], []])
         } else {
           return of(res);
@@ -64,7 +64,7 @@ export class ClientService {
       }), mergeMap(res => {
         if (clientData.contract.length > 0) {
           const resource4 = new Resource(new Array);
-          this.inputDataContract([clientData, resource4, clientId]);
+          this.inputDataContract([clientData, resource4, clientId, req.user]);
           return this.clientContractDbService.createByModel([resource4, [], [], []])
         } else {
           return of(res);
@@ -73,11 +73,13 @@ export class ClientService {
     );
   }
 
-  public updateClient([editClientData, req]: [UpdateClientDTO, UserMainModel]) {
+  public updateClient([editClientData, req]: [UpdateClientDTO, any]) {
     const data = new ClientProfileModel
 
     data.CLIENT_GUID = editClientData.id;
     this.inputDataClient([data, editClientData]);
+    data.UPDATE_USER_GUID = req.user.USER_GUID;
+    data.UPDATE_TS = new Date().toISOString();
 
     const resource = new Resource(new Array);
     resource.resource.push(data);
@@ -90,8 +92,8 @@ export class ClientService {
     let postData = bundleClientData.post;
     let deleteData = bundleClientData.delete;
 
-    let patchResource = this.patchProcessBundle([patchData]);
-    let postResource = this.postProcessBundle([postData]);
+    let patchResource = this.patchProcessBundle([patchData, req]);
+    let postResource = this.postProcessBundle([postData, req]);
     let deleteResource = this.deleteProcessBundle([deleteData]);
 
 
@@ -127,43 +129,43 @@ export class ClientService {
     }
   }
 
-  private patchProcessBundle([patchData]: [PatchBundleDTO]) {
+  private patchProcessBundle([patchData, req]: [PatchBundleDTO, any]) {
     if (patchData.client.length > 0) {
       patchData.client.forEach(element => {
-        this.updateClient([element, null]).subscribe();
+        this.updateClient([element, req]).subscribe();
       });
     }
     if (patchData.contract.length > 0) {
       patchData.contract.forEach(element => {
-        this.contractService.updateContract([element]).subscribe();
+        this.contractService.updateContract([element, req.user]).subscribe();
       });
     }
     if (patchData.project.length > 0) {
       patchData.project.forEach(element => {
-        this.projectService.updateProject([element]).subscribe();
+        this.projectService.updateProject([element, req.user]).subscribe();
       })
     }
     if (patchData.location.length > 0) {
       patchData.location.forEach(element => {
-        this.locationService.updateLocation([element]).subscribe();
+        this.locationService.updateLocation([element, req.user]).subscribe();
       });
     }
   }
 
-  private postProcessBundle([postData]: [PostBundleDTO]) {
+  private postProcessBundle([postData, user]: [PostBundleDTO, UserMainModel]) {
     if (postData.contract.length > 0) {
       postData.contract.forEach(element => {
-        this.contractService.createContract([element]).subscribe();
+        this.contractService.createContract([element, user]).subscribe();
       });
     }
     if (postData.project.length > 0) {
       postData.project.forEach(element => {
-        this.projectService.createProject([element]).subscribe();
+        this.projectService.createProject([element, user]).subscribe();
       })
     }
     if (postData.location.length > 0) {
       postData.location.forEach(element => {
-        this.locationService.createLocation([element]).subscribe();
+        this.locationService.createLocation([element, user]).subscribe();
       });
     }
   }
@@ -215,7 +217,7 @@ export class ClientService {
     return model;
   }
 
-  public inputDataLocation([data, resource2, clientId]: [CreateClientDTO, Resource, string]) {
+  public inputDataLocation([data, resource2, clientId, user]: [CreateClientDTO, Resource, string, UserMainModel]) {
     // const clientId = data.id;
     data.location.forEach(element => {
       let model = new ClientLocationModel;
@@ -225,6 +227,7 @@ export class ClientService {
       model.LONGITUDE = element.long;
       model.ADDRESS = element.address;
       model.STATUS = 1;
+      model.CREATION_USER_GUID = user.USER_GUID;
 
       resource2.resource.push(model);
     });
@@ -232,7 +235,7 @@ export class ClientService {
     return resource2;
   }
 
-  public inputDataProject([data, resource3, clientId]: [CreateClientDTO, Resource, string]) {
+  public inputDataProject([data, resource3, clientId, user]: [CreateClientDTO, Resource, string, UserMainModel]) {
 
     data.project.forEach(element => {
       let model = new ClientProjectModel;
@@ -242,13 +245,14 @@ export class ClientService {
       model.SOC_NO = element.code;
       model.DESCRIPTION = element.description;
       model.STATUS = 1;
+      model.CREATION_USER_GUID = user.USER_GUID;
 
       resource3.resource.push(model);
     });
     return resource3;
   }
 
-  public inputDataContract([data, resource4, clientId]: [CreateClientDTO, Resource, string]) {
+  public inputDataContract([data, resource4, clientId, user]: [CreateClientDTO, Resource, string, UserMainModel]) {
     // const clientId = data.id;
     data.contract.forEach(element => {
       let model = new ClientContractModel;
@@ -258,6 +262,7 @@ export class ClientService {
       model.CONTRACT_NO = element.code;
       model.DESCRIPTION = element.description;
       model.STATUS = 1;
+      model.CREATION_USER_GUID = user.USER_GUID;
 
       resource4.resource.push(model);
     });

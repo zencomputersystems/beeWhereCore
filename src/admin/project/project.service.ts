@@ -7,6 +7,7 @@ import { v1 } from "uuid";
 import { Resource } from "../../common/model/resource.model";
 import { UpdateProjectDTO } from "./dto/update-project.dto";
 import { map } from "rxjs/operators";
+import { UserMainModel } from '../../common/model/user-main.model';
 
 @Injectable()
 export class ProjectService {
@@ -26,12 +27,13 @@ export class ProjectService {
     // return of(data);
   }
 
-  public createProject([createProjectDTO]: [CreateProjectDTO]) {
+  public createProject([createProjectDTO, user]: [CreateProjectDTO, UserMainModel]) {
 
     const dataProject = new ClientProjectModel
 
     dataProject.PROJECT_GUID = v1();
     this.inputDataProject([dataProject, createProjectDTO]);
+    dataProject.CREATION_USER_GUID = user.USER_GUID;
 
     const resource = new Resource(new Array);
     resource.resource.push(dataProject);
@@ -39,10 +41,12 @@ export class ProjectService {
     return this.clientProjectDbService.createByModel([resource, [], [], []])
   }
 
-  public updateProject([updateProjectDTO]: [UpdateProjectDTO]) {
+  public updateProject([updateProjectDTO, user]: [UpdateProjectDTO, UserMainModel]) {
     const data = new ClientProjectModel
     data.PROJECT_GUID = updateProjectDTO.projectId;
     this.inputDataProject([data, updateProjectDTO]);
+    data.UPDATE_USER_GUID = user.USER_GUID;
+    data.UPDATE_TS = new Date().toISOString();
 
     const resource = new Resource(new Array);
     resource.resource.push(data);

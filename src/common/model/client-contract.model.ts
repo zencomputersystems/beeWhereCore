@@ -1,4 +1,5 @@
-export class ClientContractModel {
+import { CreateUpdateModel } from './create-update.model';
+export class ClientContractModel extends CreateUpdateModel {
   CONTRACT_GUID: string;
   CLIENT_GUID: string;
   NAME: string;

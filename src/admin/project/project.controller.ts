@@ -14,13 +14,13 @@ export class ProjectController {
   @Post()
   @ApiOperation({ title: 'Add project to client', description: 'Add project to client' })
   createProject(@Body() createProjectData: CreateProjectDTO, @Req() req, @Res() res) {
-    runCreateService([this.projectService.createProject([createProjectData]), res]);
+    runCreateService([this.projectService.createProject([createProjectData, req.user]), res]);
   }
 
   @Patch()
   @ApiOperation({ title: 'Update client project', description: 'Update client project' })
   updateProject(@Body() updateProjectData: UpdateProjectDTO, @Req() req, @Res() res) {
-    runUpdateService([this.projectService.updateProject([updateProjectData]), res]);
+    runUpdateService([this.projectService.updateProject([updateProjectData, req.user]), res]);
   }
 
   @Get()

@@ -7,6 +7,7 @@ import { v1 } from "uuid";
 import { Resource } from "../../common/model/resource.model";
 import { UpdateContractDTO } from "./dto/update-contract.dto";
 import { map } from "rxjs/operators";
+import { UserMainModel } from '../../common/model/user-main.model';
 
 @Injectable()
 export class ContractService {
@@ -25,12 +26,13 @@ export class ContractService {
     // return of(data);
   }
 
-  public createContract([createContractDTO]: [CreateContractDTO]) {
+  public createContract([createContractDTO, user]: [CreateContractDTO, UserMainModel]) {
 
     const dataContract = new ClientContractModel
 
     dataContract.CONTRACT_GUID = v1();
     this.inputDataContract([dataContract, createContractDTO]);
+    dataContract.CREATION_USER_GUID = user.USER_GUID;
 
     const resource = new Resource(new Array);
     resource.resource.push(dataContract);
@@ -38,10 +40,12 @@ export class ContractService {
     return this.clientContractDbService.createByModel([resource, [], [], []])
   }
 
-  public updateContract([updateContractDTO]: [UpdateContractDTO]) {
+  public updateContract([updateContractDTO, user]: [UpdateContractDTO, UserMainModel]) {
     const data = new ClientContractModel
     data.CONTRACT_GUID = updateContractDTO.contractId;
     this.inputDataContract([data, updateContractDTO]);
+    data.UPDATE_USER_GUID = user.USER_GUID;
+    data.UPDATE_TS = new Date().toISOString();
 
     const resource = new Resource(new Array);
     resource.resource.push(data);

@@ -20,12 +20,13 @@ export class LocationService {
     // return of(data);
   }
 
-  public createLocation([createlocationDTO]: [CreateLocationDTO]) {
+  public createLocation([createlocationDTO, user]: [CreateLocationDTO, any]) {
 
     const datalocation = new ClientLocationModel
 
     datalocation.LOCATION_GUID = v1();
     this.inputDataLocation([datalocation, createlocationDTO]);
+    datalocation.CREATION_USER_GUID = user.USER_GUID;
 
     const resource = new Resource(new Array);
     resource.resource.push(datalocation);
@@ -33,10 +34,12 @@ export class LocationService {
     return this.clientLocationDbService.createByModel([resource, [], [], []])
   }
 
-  public updateLocation([updatelocationDTO]: [UpdateLocationDTO]) {
+  public updateLocation([updatelocationDTO, user]: [UpdateLocationDTO, any]) {
     const data = new ClientLocationModel
     data.LOCATION_GUID = updatelocationDTO.locationId;
     this.inputDataLocation([data, updatelocationDTO]);
+    data.UPDATE_USER_GUID = user.USER_GUID;
+    data.UPDATE_TS = new Date().toISOString();
 
     const resource = new Resource(new Array);
     resource.resource.push(data);
