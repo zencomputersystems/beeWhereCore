@@ -33,35 +33,39 @@ export class ClockImportService {
             model.PROJECT_ID = 'none';
             model.CONTRACT_ID = 'none';
             model.SOURCE_ID = 3;
+            // console.log(element.Att_Time);
             if (element.Dev_ID == 1) {
-              model.CLOCK_IN_TIME = moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
+              model.CLOCK_IN_TIME = moment(element.Att_Time).subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
+              // console.log(model.CLOCK_IN_TIME);
             } else if (element.Dev_ID == 2) {
-              model.CLOCK_OUT_TIME = moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
+              model.CLOCK_OUT_TIME = moment(element.Att_Time).subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
+              // console.log(model.CLOCK_OUT_TIME);
             }
             // model.CLOCK_IN_TIME = moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
             // model.CLOCK_OUT_TIME = moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
             resource.resource.push(model);
           }
         });
-        console.log(resource);
+        // console.log(resource);
         return this.clockLogDbService.createByModel([resource, [], [], []]).pipe(
           map(res => {
             return res.data.resource;
           })
         );
-        // return res;
+        // return of(res);
       })
     )
 
   }
 
-  public logImportAttendance([fileInfo, user]: [any, any]) {
+  public logImportAttendance([fileInfo, user, filename]: [any, any, string]) {
 
     let model = new AttendanceUploadLogModel;
     let resource = new Resource(new Array);
 
     model.TENANT_GUID = user.TENANT_GUID;
-    model.FILENAME = fileInfo.originalname;
+    // model.FILENAME = fileInfo.originalname;
+    model.FILENAME = filename;
     model.SIZE = fileInfo.size;
     model.CREATION_USER_GUID = user.USER_GUID;
 

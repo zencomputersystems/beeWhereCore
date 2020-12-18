@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { AzureStorageService } from "@nestjs/azure-storage";
+import { Controller, Get, Logger, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { FileInterceptor } from "@nestjs/platform-express/multer/interceptors";
 import { ApiBearerAuth, ApiImplicitFile, ApiOperation } from "@nestjs/swagger";
@@ -12,7 +13,8 @@ import { ClockImportService } from './clock-import.service';
 @ApiBearerAuth()
 export class ClockImportController {
   constructor(
-    public clockImportService: ClockImportService
+    public clockImportService: ClockImportService,
+    private readonly azureStorage: AzureStorageService
   ) { }
 
   @Post('csv')
@@ -25,6 +27,22 @@ export class ClockImportController {
     }
     // console.log(req.file);
 
+    var ts = Math.round((new Date()).getTime() / 1000);
+
+    file.originalname = file.originalname.replace(/[^a-zA-Z0-9 .]/gi, '');
+
+    file = {
+      ...file,
+      originalname: 'eleave/' + ts + '_' + file.originalname,
+    };
+
+
+    const storageUrl = await this.azureStorage.upload(file);
+    // Logger.log(`Storage URL: ${storageUrl}`, 'AppController');
+
+    const fileData: string[] = file.originalname.split("/");
+    // console.log(fileData);
+
     const records = parse(file.buffer, {
       columns: true,
       skip_empty_lines: true,
@@ -35,7 +53,8 @@ export class ClockImportController {
     this.clockImportService.importCsvProcess([records, req.user]).subscribe(
       data => {
         // console.log(data);
-        this.clockImportService.logImportAttendance([req.file, req.user]);
+        // console.log();
+        this.clockImportService.logImportAttendance([req.file, req.user, fileData[1]]);
         res.send(data);
       },
       err => {
