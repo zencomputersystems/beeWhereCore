@@ -94,7 +94,7 @@ export class ClockService {
     const startDate = moment.unix(params.startdate).utc().format('YYYY-MM-DD 00:00:00');
     let endDate = moment.unix(params.enddate).utc().format('YYYY-MM-DD 23:59:59');
 
-    let method = this.clockLogDbService.findByFilterV4([['CLOCK_IN_TIME', 'CLOCK_OUT_TIME', 'ACTIVITY'], [`(USER_GUID=${userId})`, `AND (CLOCK_IN_TIME >= ` + startDate + `)`, `AND (CLOCK_IN_TIME <= ` + endDate + `)`], null, null, null, [], null]);
+    let method = this.clockLogDbService.findByFilterV4([['CLOCK_IN_TIME', 'CLOCK_OUT_TIME', 'ACTIVITY'], [`(USER_GUID=${userId})`], null, null, null, [], null]);
     return method.pipe(map(res => {
       // console.log(res);
       let resArr = [];
@@ -119,6 +119,19 @@ export class ClockService {
 
               previousInDate = previousInDate > element.CLOCK_IN_TIME ? element.CLOCK_IN_TIME : previousInDate;
               previousOutDate = previousOutDate < element.CLOCK_OUT_TIME ? element.CLOCK_OUT_TIME : previousOutDate;
+
+              let byDate = res.filter(x => moment(x.CLOCK_IN_TIME).add(8, 'hours').format('YYYY-MM-DD') === startdate || moment(x.CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD') === startdate);
+
+              var dateIn = byDate.map(function (x) { return x.CLOCK_IN_TIME ? new Date(x.CLOCK_IN_TIME) : null; }).filter(x => x != null);
+
+              var earliest = new Date(Math.min.apply(null, dateIn));
+              var dateOut = byDate.map(function (x) { return x.CLOCK_OUT_TIME ? new Date(x.CLOCK_OUT_TIME) : null; }).filter(x => x != null);
+
+              var latest = new Date(Math.max.apply(null, dateOut));
+
+              previousInDate = earliest;
+              previousOutDate = latest;
+
             }
             if (params.type == 'activity') {
               delete element.CLOCK_IN_TIME;
