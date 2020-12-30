@@ -155,6 +155,53 @@ export class AttendanceProfileDbService extends BaseDBService {
  * @extends {BaseDBService}
  */
 @Injectable()
+export class ClockImportLogDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof ClockLogDbService
+   */
+  public tableDB = 'a_clock_import_log';
+  /**
+   *Creates an instance of ClockLogDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof ClockLogDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "a_clock_import_log") }
+}
+
+/**
+ * DB table : a_clock_log
+ *
+ * @export
+ * @class ClockLogDbService
+ * @extends {BaseDBService}
+ */
+@Injectable()
+export class ClockImportLogViewDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof ClockLogDbService
+   */
+  public tableDB = 'a_clock_log_view';
+  /**
+   *Creates an instance of ClockLogDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof ClockLogDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "a_clock_log_view") }
+}
+/**
+ * DB table : a_clock_log
+ *
+ * @export
+ * @class ClockLogDbService
+ * @extends {BaseDBService}
+ */
+@Injectable()
 export class ClockLogDbService extends BaseDBService {
   /**
    * Declare table

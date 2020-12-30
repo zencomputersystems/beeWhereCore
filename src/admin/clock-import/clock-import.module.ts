@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { QueryParserService } from "../../common/helper/query-parser.service";
-import { AttendanceUploadLogDbService, ClockLogDbService, UserprofileDbService } from "../../common/db/table.db.service";
+import { AttendanceUploadLogDbService, ClockImportLogDbService, ClockLogDbService, UserprofileDbService } from "../../common/db/table.db.service";
 import { getModuleHttp } from "../../common/helper/basic-function.service";
 import { ClockImportController } from "./clock-import.controller";
 import { ClockImportService } from "./clock-import.service";
@@ -12,7 +12,8 @@ import { AzureStorageModule } from '@nestjs/azure-storage';
     UserprofileDbService,
     AttendanceUploadLogDbService,
     ClockLogDbService,
-    QueryParserService
+    QueryParserService,
+    ClockImportLogDbService
   ],
   controllers: [
     ClockImportController
