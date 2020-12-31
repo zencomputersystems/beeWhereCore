@@ -103,8 +103,17 @@ export class ClockService {
   public getActivityProgress([clockLogGuid]: [string]) {
     return this.clockLogDbService.findByFilterV4([['ACTIVITY'], [`(CLOCK_LOG_GUID=${clockLogGuid})`], null, null, null, [], null]).pipe(
       map(res => {
-        const activityData = convertXMLToJson(res[0].ACTIVITY);
-        return activityData.root;
+        let activityArr = [];
+        if (res[0].ACTIVITY) {
+          const activityData = convertXMLToJson(res[0].ACTIVITY);
+          if (activityData.root) {
+            let activityDataTemp = activityData.root.activity;
+            if (activityDataTemp.length == undefined) {
+              activityArr.push(activityDataTemp);
+            }
+          }
+        }
+        return activityArr;
       })
     )
   }
