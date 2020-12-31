@@ -57,24 +57,35 @@ export class ClockService {
     return this.clockLogViewDbService.findByFilterV4([[], [`(CLOCK_LOG_GUID=${clockId})`], null, null, null, ['PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]).pipe(
       map(res => {
         let activityArr = [];
-        if (res[0].ACTIVITY != null) {
-          // res[0].ACTIVITY = convertXMLToJson(res[0].ACTIVITY);
+        // if (res[0].ACTIVITY != null) {
+        //   // res[0].ACTIVITY = convertXMLToJson(res[0].ACTIVITY);
 
-          res[0].ACTIVITY = convertXMLToJson(res[0].ACTIVITY);
-          if (res[0].ACTIVITY.root) {
-            res[0].ACTIVITY = res[0].ACTIVITY.root.activity;
-            if (res[0].ACTIVITY.length == undefined) {
-              let setArr = [];
-              setArr.push(res[0].ACTIVITY);
-              res[0].ACTIVITY = setArr;
-            }
+        //   res[0].ACTIVITY = convertXMLToJson(res[0].ACTIVITY);
+        //   if (res[0].ACTIVITY.root) {
+        //     res[0].ACTIVITY = res[0].ACTIVITY.root.activity;
+        //     if (res[0].ACTIVITY.length == undefined) {
+        //       let setArr = [];
+        //       setArr.push(res[0].ACTIVITY);
+        //       res[0].ACTIVITY = setArr;
+        //     }
 
-            if (res[0].ACTIVITY != undefined) {
-              activityArr.push(res[0].ACTIVITY);
+        //     if (res[0].ACTIVITY != undefined) {
+        //       activityArr.push(res[0].ACTIVITY);
+        //     }
+        //   }
+
+        // }
+
+        if (res[0].ACTIVITY) {
+          const activityData = convertXMLToJson(res[0].ACTIVITY);
+          if (activityData.root) {
+            let activityDataTemp = activityData.root.activity;
+            if (activityDataTemp.length == undefined) {
+              activityArr.push(activityDataTemp);
             }
           }
-
         }
+
         res[0].ACTIVITY = activityArr;
         res[0].CLOCK_IN_TIME = res[0].CLOCK_IN_TIME != null ? moment(res[0].CLOCK_IN_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
         res[0].CLOCK_OUT_TIME = res[0].CLOCK_OUT_TIME != null ? moment(res[0].CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
