@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { of } from "rxjs";
-import { ClockLogDbService } from "../../common/db/table.db.service";
+import { ClockLogDbService, ClockLogViewDbService } from "../../common/db/table.db.service";
 import { ClockLogModel } from "../../common/model/clock-log.model";
 import { CreateClockDTO } from "./dto/create-clock.dto";
 import { v1 } from 'uuid';
@@ -15,7 +15,10 @@ var { convertJsonToXML, convertXMLToJson } = require('@zencloudservices/xmlparse
 
 @Injectable()
 export class ClockService {
-  constructor(private readonly clockLogDbService: ClockLogDbService) { }
+  constructor(
+    private readonly clockLogDbService: ClockLogDbService,
+    private readonly clockLogViewDbService: ClockLogViewDbService
+  ) { }
   public clockInProcess([createClockDTO, user]: [CreateClockDTO, any]) {
     let model = new ClockLogModel;
     model.CLOCK_LOG_GUID = v1();
@@ -51,11 +54,28 @@ export class ClockService {
   }
 
   public getClockData([clockId]: [string]) {
-    return this.clockLogDbService.findByFilterV4([[], [`(CLOCK_LOG_GUID=${clockId})`], null, null, null, ['PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]).pipe(
+    return this.clockLogViewDbService.findByFilterV4([[], [`(CLOCK_LOG_GUID=${clockId})`], null, null, null, ['PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]).pipe(
       map(res => {
+        let activityArr = [];
         if (res[0].ACTIVITY != null) {
+          // res[0].ACTIVITY = convertXMLToJson(res[0].ACTIVITY);
+
           res[0].ACTIVITY = convertXMLToJson(res[0].ACTIVITY);
+          if (res[0].ACTIVITY.root) {
+            res[0].ACTIVITY = res[0].ACTIVITY.root.activity;
+            if (res[0].ACTIVITY.length == undefined) {
+              let setArr = [];
+              setArr.push(res[0].ACTIVITY);
+              res[0].ACTIVITY = setArr;
+            }
+
+            if (res[0].ACTIVITY != undefined) {
+              activityArr.push(res[0].ACTIVITY);
+            }
+          }
+
         }
+        res[0].ACTIVITY = activityArr;
         res[0].CLOCK_IN_TIME = res[0].CLOCK_IN_TIME != null ? moment(res[0].CLOCK_IN_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
         res[0].CLOCK_OUT_TIME = res[0].CLOCK_OUT_TIME != null ? moment(res[0].CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
 

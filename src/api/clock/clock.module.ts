@@ -3,7 +3,7 @@ import { ClockController } from "./clock.controller";
 import { QueryParserService } from "../../common/helper/query-parser.service";
 import { ClockService } from "./clock.service";
 import { Module } from "@nestjs/common";
-import { ClockLogDbService } from "../../common/db/table.db.service";
+import { ClockLogDbService, ClockLogViewDbService } from '../../common/db/table.db.service';
 
 @Module({
   providers: [
@@ -13,7 +13,8 @@ import { ClockLogDbService } from "../../common/db/table.db.service";
     // ClockDbService,
     // ClientContractDbService,
     QueryParserService,
-    ClockLogDbService
+    ClockLogDbService,
+    ClockLogViewDbService
   ],
   controllers: [
     ClockController

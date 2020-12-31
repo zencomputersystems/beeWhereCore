@@ -179,7 +179,7 @@ export class ClockImportLogDbService extends BaseDBService {
  * @extends {BaseDBService}
  */
 @Injectable()
-export class ClockImportLogViewDbService extends BaseDBService {
+export class ClockLogViewDbService extends BaseDBService {
   /**
    * Declare table
    *
