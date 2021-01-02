@@ -43,7 +43,8 @@ export class UserInfoService {
       }), mergeMap(res => {
         // find calendar data to find rest day
         if (profileData.CALENDAR_GUID != null) {
-          return this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID=${profileData.CALENDAR_GUID})`, `AND (YEAR=${new Date().getFullYear()})`], null, null, null, [], null]).pipe(
+          // return this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID=${profileData.CALENDAR_GUID})`, `AND (YEAR=${new Date().getFullYear()})`], null, null, null, [], null]).pipe(
+          return this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID=${profileData.CALENDAR_GUID})`], null, null, null, [], null]).pipe(
             map(res2 => {
               let calendarData = convertXMLToJson(res2[0].PROPERTIES_XML);
               calendarRestDay = calendarData.rest;
