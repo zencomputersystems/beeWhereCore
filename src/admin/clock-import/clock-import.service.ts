@@ -43,8 +43,8 @@ export class ClockImportService {
               model.CLOCK_OUT_TIME = moment(element.Att_Time).subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
               // console.log(model.CLOCK_OUT_TIME);
             }
-            // model.CLOCK_IN_TIME = moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
-            // model.CLOCK_OUT_TIME = moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
+            // model.CLOCK_IN_TIME = moment(element.Att_Time, 'YYYY-MM-DD HH:mm:ss').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
+            // model.CLOCK_OUT_TIME = moment(element.Att_Time, 'YYYY-MM-DD HH:mm:ss').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
             resource.resource.push(model);
           }
         });
@@ -92,27 +92,27 @@ export class ClockImportService {
             model.CONTRACT_ID = 'none';
             model.SOURCE_ID = 3;
             // console.log(element.Att_Time);
-            // console.log(moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss'));
+            // console.log(moment(element.Att_Time, 'YYYY-MM-DD HH:mm:ss').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss'));
 
             if (element.Dev_ID == 1) {
-              let checkingClockIn = existData.find(x => x.USER_GUID === userData.USER_GUID && x.CLOCK_IN_TIME === moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss'));
+              let checkingClockIn = existData.find(x => x.USER_GUID === userData.USER_GUID && x.CLOCK_IN_TIME === moment(element.Att_Time, 'YYYY-MM-DD HH:mm:ss').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss'));
               // console.log(checkingClockIn);
               if (!checkingClockIn) {
-                model.CLOCK_IN_TIME = moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
+                model.CLOCK_IN_TIME = moment(element.Att_Time, 'YYYY-MM-DD HH:mm:ss').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
                 statusData = true;
               }
               // console.log(model.CLOCK_IN_TIME);
             } else if (element.Dev_ID == 2) {
-              let checkingClockOut = existData.find(x => x.USER_GUID === userData.USER_GUID && x.CLOCK_OUT_TIME === moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss'));
+              let checkingClockOut = existData.find(x => x.USER_GUID === userData.USER_GUID && x.CLOCK_OUT_TIME === moment(element.Att_Time, 'YYYY-MM-DD HH:mm:ss').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss'));
               // console.log(checkingClockOut);
               if (!checkingClockOut) {
-                model.CLOCK_OUT_TIME = moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
+                model.CLOCK_OUT_TIME = moment(element.Att_Time, 'YYYY-MM-DD HH:mm:ss').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
                 statusData = true;
               }
               // console.log(model.CLOCK_OUT_TIME);
             }
-            // model.CLOCK_IN_TIME = moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
-            // model.CLOCK_OUT_TIME = moment(element.Att_Time, 'DD/MM/YYYY HH:mm').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
+            // model.CLOCK_IN_TIME = moment(element.Att_Time, 'YYYY-MM-DD HH:mm:ss').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
+            // model.CLOCK_OUT_TIME = moment(element.Att_Time, 'YYYY-MM-DD HH:mm:ss').subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
 
             if (statusData) {
               resource.resource.push(model);
