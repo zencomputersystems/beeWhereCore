@@ -270,14 +270,17 @@ export class ReportService {
         calendarIdList = [...new Set(res.map(item => item.CALENDAR_GUID))];
         workingHourIdList = [...new Set(res.map(item => item.WORKING_HOURS_GUID))];
         // find calendar profile data details (for public holiday and rest day)
-        let calendarProfileDetails = this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID IN (${calendarIdList}))`, `AND (YEAR=${new Date().getFullYear()})`], null, null, null, [], null]);
+        // let calendarProfileDetails = this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID IN (${calendarIdList}))`, `AND (YEAR=${new Date().getFullYear()})`], null, null, null, [], null]);
+
+        let calendarProfileDetails = this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID IN (${calendarIdList}))`, `AND (YEAR=${new Date(data.startdate).getFullYear()})`], null, null, null, [], null]);
+
         // find working hours data details (to check early out, late)
         let workingHoursData = this.workingHourDbService.findByFilterV4([[], [`(WORKING_HOURS_GUID IN (${workingHourIdList}))`], null, null, null, [], null]);
         // get all leave by date (to state user apply leave on that day)
         let leaveTransactionData = this.leaveTransactionDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`, `AND (USER_GUID IN (${data.userid}))`, `AND (START_DATE >= ${data.startdate})`, `AND (END_DATE <= ${data.enddate})`, `AND (STATUS = APPROVED)`], null, null, null, [], null]);
         // get all clock log 
         // let clockLogData = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CREATION_TS >= ${data.startdate})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
-        let clockLogData = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CREATION_TS >= ${data.startdate})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
+        let clockLogData = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CREATION_TS >= ${data.startdate})`, `AND (CREATION_TS <= ${data.enddate} OR CLOCK_OUT_TIME <= ${data.enddate})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
 
         // get all leavetype
         let leavetypeData = this.leaveTypeDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`], null, null, null, [], null])
@@ -302,6 +305,7 @@ export class ReportService {
 
           // find calendar data for current looping user
           let calendarDetailsInfo = calendarList.find(x => x.CALENDAR_GUID === userData.CALENDAR_GUID);
+          // console.log(calendarDetailsInfo);
           let calendarDetails = convertXMLToJson(calendarDetailsInfo.PROPERTIES_XML);
           // console.log(calendarDetails);
           // console.log(leaveList);
