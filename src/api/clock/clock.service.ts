@@ -164,6 +164,8 @@ export class ClockService {
 
               var dateIn = byDate.map(function (x) { return x.CLOCK_IN_TIME ? new Date(x.CLOCK_IN_TIME) : null; }).filter(x => x != null);
 
+              dateIn = dateIn.filter(x => moment(x).add(8, 'hours').format('YYYY-MM-DD') === startdate);
+
               var earliest = new Date(Math.min.apply(null, dateIn));
               var dateOut = byDate.map(function (x) { return x.CLOCK_OUT_TIME ? new Date(x.CLOCK_OUT_TIME) : null; }).filter(x => x != null);
 
