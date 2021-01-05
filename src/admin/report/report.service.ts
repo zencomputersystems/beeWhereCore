@@ -280,7 +280,10 @@ export class ReportService {
         let leaveTransactionData = this.leaveTransactionDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`, `AND (USER_GUID IN (${data.userid}))`, `AND (START_DATE >= ${data.startdate})`, `AND (END_DATE <= ${data.enddate})`, `AND (STATUS = APPROVED)`], null, null, null, [], null]);
         // get all clock log 
         // let clockLogData = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CREATION_TS >= ${data.startdate})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
-        let clockLogData = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CREATION_TS >= ${data.startdate})`, `AND (CREATION_TS <= ${data.enddate} OR CLOCK_OUT_TIME <= ${data.enddate})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
+        // let clockLogData = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CREATION_TS >= ${data.startdate})`, `AND (CREATION_TS <= ${data.enddate} OR CLOCK_OUT_TIME <= ${data.enddate})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
+        let startdateTemp = moment(data.startdate).subtract(1, 'days').format('YYYY-MM-DD');
+        let enddateTemp = moment(data.enddate).add(1, 'days').format('YYYY-MM-DD');
+        let clockLogData = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (KEY_TIME >= ${startdateTemp})`, `AND (KEY_TIME <= ${enddateTemp})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
 
         // get all leavetype
         let leavetypeData = this.leaveTypeDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`], null, null, null, [], null])
@@ -339,8 +342,11 @@ export class ReportService {
               // console.log(restday);
               let publicHoliday = calendarDetails.holiday.find(x => x.start === startdate);
               // console.log(publicHoliday);
+              // console.log(clockList);
+              // let byDate = clockList.filter(x => x.USER_GUID === userguid && (moment(x.CLOCK_IN_TIME).add(8, 'hours').format('YYYY-MM-DD') === startdate || moment(x.CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD') === startdate));
+              // console.log(startdate);
               let byDate = clockList.filter(x => x.USER_GUID === userguid && (moment(x.CLOCK_IN_TIME).add(8, 'hours').format('YYYY-MM-DD') === startdate || moment(x.CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD') === startdate));
-
+              // console.log(byDate);
               var dateIn = byDate.map(function (x) { return x.CLOCK_IN_TIME ? new Date(x.CLOCK_IN_TIME) : null; }).filter(x => x != null);
 
               var earliest = new Date(Math.min.apply(null, dateIn));
@@ -389,7 +395,7 @@ export class ReportService {
               let arrTemp = {};
               arrTemp['date'] = startdate;
               arrTemp['total_hours'] = period != 'Invalid date' ? period : null;
-
+              // console.log(byDate);
               if (byDate.length == 0) {
                 arrTemp['problem'] = 'Absent';
               } else if (timeDiff < 0) {
