@@ -112,7 +112,7 @@ export class ClockService {
   }
 
   public getActivityProgress([clockLogGuid]: [string]) {
-    return this.clockLogDbService.findByFilterV4([['ACTIVITY'], [`(CLOCK_LOG_GUID=${clockLogGuid})`], null, null, null, [], null]).pipe(
+    return this.clockLogViewDbService.findByFilterV4([['ACTIVITY'], [`(CLOCK_LOG_GUID=${clockLogGuid})`], null, null, null, [], null]).pipe(
       map(res => {
         let activityArr = [];
         if (res[0].ACTIVITY) {
@@ -134,7 +134,7 @@ export class ClockService {
     const startDate = moment.unix(params.startdate).utc().format('YYYY-MM-DD 00:00:00');
     let endDate = moment.unix(params.enddate).utc().format('YYYY-MM-DD 23:59:59');
 
-    let method = this.clockLogDbService.findByFilterV4([['CLOCK_IN_TIME', 'CLOCK_OUT_TIME', 'ACTIVITY'], [`(USER_GUID=${userId})`], null, null, null, [], null]);
+    let method = this.clockLogViewDbService.findByFilterV4([['CLOCK_IN_TIME', 'CLOCK_OUT_TIME', 'ACTIVITY'], [`(USER_GUID=${userId})`], null, null, null, [], null]);
     return method.pipe(map(res => {
       // console.log(res);
       let resArr = [];
@@ -212,7 +212,7 @@ export class ClockService {
   }
 
   public getHistoryClockByLimit([userId, params]: [string, any]) {
-    let method = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], null, params.limit, params.page, ['PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
+    let method = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], 'KEY_TIME DESC', params.limit, params.page, ['PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
     return method.pipe(map(res => {
       res.forEach(element => {
         if (element.ACTIVITY != null) {
