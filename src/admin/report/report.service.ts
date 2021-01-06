@@ -283,7 +283,7 @@ export class ReportService {
         // let clockLogData = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CREATION_TS >= ${data.startdate})`, `AND (CREATION_TS <= ${data.enddate} OR CLOCK_OUT_TIME <= ${data.enddate})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
         let startdateTemp = moment(data.startdate).subtract(1, 'days').format('YYYY-MM-DD');
         let enddateTemp = moment(data.enddate).add(1, 'days').format('YYYY-MM-DD');
-        let clockLogData = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (KEY_TIME >= ${startdateTemp})`, `AND (KEY_TIME <= ${enddateTemp})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
+        let clockLogData = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (KEY_TIME >= ${startdateTemp})`, `AND (KEY_TIME <= ${enddateTemp})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
 
         // get all leavetype
         let leavetypeData = this.leaveTypeDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`], null, null, null, [], null])
