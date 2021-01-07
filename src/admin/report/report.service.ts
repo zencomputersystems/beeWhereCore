@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import moment = require("moment");
 import { of, forkJoin } from 'rxjs';
 import { map, mergeMap } from "rxjs/operators";
-import { ClockLogDbService, WorkingHourDbService, UserprofileDbService, CalendarProfileDetailDbService, CalendarProfileDbService, LeaveTransactionDbService, LeaveTypeDbService, ClockLogViewDbService } from '../../common/db/table.db.service';
+import { ClockLogDbService, WorkingHourDbService, UserprofileDbService, CalendarProfileDetailDbService, LeaveTransactionDbService, LeaveTypeDbService, ClockLogViewDbService } from '../../common/db/table.db.service';
 import { ActivityDetailDTO, AttendanceDetailsDTO, ResultActivityDTO, ResultAttendanceDTO } from './dto/result-attendance.dto';
 
 var { convertXMLToJson } = require('@zencloudservices/xmlparser');
@@ -276,14 +276,19 @@ export class ReportService {
 
         // find working hours data details (to check early out, late)
         let workingHoursData = this.workingHourDbService.findByFilterV4([[], [`(WORKING_HOURS_GUID IN (${workingHourIdList}))`], null, null, null, [], null]);
+
+        let startdateTime = moment(data.startdate).subtract(3, 'months').format('YYYY-MM-DD');
+        let enddateTime = moment(data.startdate).add(3, 'months').format('YYYY-MM-DD');
+        // console.log(startdateTime);
         // get all leave by date (to state user apply leave on that day)
-        let leaveTransactionData = this.leaveTransactionDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`, `AND (USER_GUID IN (${data.userid}))`, `AND (START_DATE >= ${data.startdate})`, `AND (END_DATE <= ${data.enddate})`, `AND (STATUS = APPROVED)`], null, null, null, [], null]);
+        let leaveTransactionData = this.leaveTransactionDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`, `AND (USER_GUID IN (${data.userid}))`, `AND (START_DATE >= ${startdateTime})`, `AND (END_DATE <= ${enddateTime})`, `AND (STATUS = APPROVED)`], null, null, null, [], null]);
+
         // get all clock log 
         // let clockLogData = this.clockLogDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CREATION_TS >= ${data.startdate})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
         // let clockLogData = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (CREATION_TS >= ${data.startdate})`, `AND (CREATION_TS <= ${data.enddate} OR CLOCK_OUT_TIME <= ${data.enddate})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['USER_DATA', 'PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
         let startdateTemp = moment(data.startdate).subtract(1, 'days').format('YYYY-MM-DD');
         let enddateTemp = moment(data.enddate).add(1, 'days').format('YYYY-MM-DD');
-        let clockLogData = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (KEY_TIME >= ${startdateTemp})`, `AND (KEY_TIME <= ${enddateTemp})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, ['PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
+        let clockLogData = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID IN (${data.userid}))`, `AND (KEY_TIME >= ${startdateTemp})`, `AND (KEY_TIME <= ${enddateTemp})`, `AND (TENANT_GUID = ${user.TENANT_GUID})`], null, null, null, [], null]);
 
         // get all leavetype
         let leavetypeData = this.leaveTypeDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`], null, null, null, [], null])
@@ -373,9 +378,12 @@ export class ReportService {
 
                 dataAttndnce.address_in = attndnceData.ADDRESS_IN;
                 dataAttndnce.job_type_in = attndnceData.JOB_TYPE;
-                dataAttndnce.client_name = attndnceData.CLIENT_DATA.NAME ? attndnceData.CLIENT_DATA.NAME : null;
-                dataAttndnce.project_code_in = attndnceData.PROJECT_DATA.SOC_NO ? attndnceData.PROJECT_DATA.SOC_NO : null;
-                dataAttndnce.contract_code_in = attndnceData.CONTRACT_DATA.CONTRACT_NO ? attndnceData.CONTRACT_DATA.CONTRACT_NO : null;
+                // dataAttndnce.client_name = attndnceData.CLIENT_DATA.NAME ? attndnceData.CLIENT_DATA.NAME : null;
+                dataAttndnce.client_name = attndnceData.CLIENT_NAME;
+                // dataAttndnce.project_code_in = attndnceData.PROJECT_DATA.SOC_NO ? attndnceData.PROJECT_DATA.SOC_NO : null;
+                dataAttndnce.project_code_in = attndnceData.PROJECT_SOC;
+                // dataAttndnce.contract_code_in = attndnceData.CONTRACT_DATA.CONTRACT_NO ? attndnceData.CONTRACT_DATA.CONTRACT_NO : null;
+                dataAttndnce.contract_code_in = attndnceData.CONTRACT_NO;
                 dataAttndnce.clock_out_time = attndnceData.CLOCK_OUT_TIME != null ? moment(attndnceData.CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
 
                 dataAttndnce.address_out = attndnceData.ADDRESS_OUT;
