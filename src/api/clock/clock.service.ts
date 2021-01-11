@@ -214,7 +214,7 @@ export class ClockService {
   }
 
   public getHistoryClockByLimit([userId, params]: [string, any]) {
-    let method = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID=${userId})`], 'KEY_TIME DESC', params.limit, params.page, ['PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
+    let method = this.clockLogViewDbService.findByFilterV4([[], [`(USER_GUID=${userId})`, 'AND (SOURCE_ID IN (1,2))'], 'KEY_TIME DESC', params.limit, params.page, ['PROJECT_DATA', 'CONTRACT_DATA', 'CLIENT_DATA'], null]);
     return method.pipe(map(res => {
       res.forEach(element => {
         if (element.ACTIVITY != null) {
