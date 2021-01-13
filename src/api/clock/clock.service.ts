@@ -82,6 +82,8 @@ export class ClockService {
             let activityDataTemp = activityData.root.activity;
             if (activityDataTemp.length == undefined) {
               activityArr.push(activityDataTemp);
+            } else {
+              activityArr = activityDataTemp;
             }
           }
         }
@@ -121,6 +123,8 @@ export class ClockService {
             let activityDataTemp = activityData.root.activity;
             if (activityDataTemp.length == undefined) {
               activityArr.push(activityDataTemp);
+            } else {
+              activityArr = activityDataTemp;
             }
           }
         }
