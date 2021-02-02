@@ -272,7 +272,9 @@ export class ReportService {
         // find calendar profile data details (for public holiday and rest day)
         // let calendarProfileDetails = this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID IN (${calendarIdList}))`, `AND (YEAR=${new Date().getFullYear()})`], null, null, null, [], null]);
 
-        let calendarProfileDetails = this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID IN (${calendarIdList}))`, `AND (YEAR=${new Date(data.startdate).getFullYear()})`], null, null, null, [], null]);
+        // let calendarProfileDetails = this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID IN (${calendarIdList}))`, `AND (YEAR=${new Date(data.startdate).getFullYear()})`], null, null, null, [], null]);
+
+        let calendarProfileDetails = this.calendarProfileDetailDbService.findByFilterV4([[], [`(CALENDAR_GUID IN (${calendarIdList}))`, `AND (YEAR IN (${new Date(data.startdate).getFullYear()},${new Date(data.enddate).getFullYear()}))`], null, null, null, [], null]);
 
         // find working hours data details (to check early out, late)
         let workingHoursData = this.workingHourDbService.findByFilterV4([[], [`(WORKING_HOURS_GUID IN (${workingHourIdList}))`], null, null, null, [], null]);
@@ -312,10 +314,15 @@ export class ReportService {
           let durationPerDay = moment(durationFullday.end_time, 'HH:mm').subtract(durationFullday.start_time).format('H');
 
           // find calendar data for current looping user
-          let calendarDetailsInfo = calendarList.find(x => x.CALENDAR_GUID === userData.CALENDAR_GUID);
-          // console.log(calendarDetailsInfo);
-          let calendarDetails = convertXMLToJson(calendarDetailsInfo.PROPERTIES_XML);
-          // console.log(calendarDetails);
+          // let calendarDetailsInfo = calendarList.find(x => x.CALENDAR_GUID === userData.CALENDAR_GUID);
+          let calendarDetailsInfo = calendarList.filter(x => x.CALENDAR_GUID === userData.CALENDAR_GUID);
+
+          let calendarDetails = convertXMLToJson(calendarDetailsInfo[0].PROPERTIES_XML);
+          let calendarDetails2 = null;
+          if (calendarDetailsInfo.length > 1) {
+            calendarDetails2 = convertXMLToJson(calendarDetailsInfo[1].PROPERTIES_XML);
+          }
+
           // console.log(leaveList);
 
           let calendarRestDay = Array.isArray(calendarDetails.rest) ? calendarDetails.rest : [calendarDetails.rest];
@@ -346,6 +353,9 @@ export class ReportService {
               let restday = restDay.includes(moment(startdate).format('dddd').toUpperCase()) ? 1 : 0;
               // console.log(restday);
               let publicHoliday = calendarDetails.holiday.find(x => x.start === startdate);
+              if (publicHoliday == null && calendarDetails2 != null) {
+                publicHoliday = calendarDetails2.holiday.find(x => x.start === startdate);
+              }
               // console.log(publicHoliday);
               // console.log(clockList);
               // let byDate = clockList.filter(x => x.USER_GUID === userguid && (moment(x.CLOCK_IN_TIME).add(8, 'hours').format('YYYY-MM-DD') === startdate || moment(x.CLOCK_OUT_TIME).add(8, 'hours').format('YYYY-MM-DD') === startdate));
