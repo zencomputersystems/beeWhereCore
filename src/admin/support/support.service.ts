@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { SupportTicketDbService, UserprofileDbService, SupportClarificationDbService, ClockLogDbService } from "../../common/db/table.db.service";
+import { SupportTicketDbService, UserprofileDbService, SupportClarificationDbService, ClockLogDbService, RoleProfileDbService } from "../../common/db/table.db.service";
 import { CreateSupportDTO } from './dto/create-support.dto';
 import { SupportTicketModel } from '../../common/model/support-ticket.model';
 import { v1 } from "uuid";
@@ -11,6 +11,8 @@ import { SupportClarificationModel } from "../../common/model/support-clarificat
 import { CreateClarificationDTO } from "./dto/create-clarification.dto";
 import { CreateAdminClarificationDTO } from "./dto/create-admin-clarification.dto";
 import { ClockLogModel } from '../../common/model/clock-log.model';
+import { EmailNodemailerService } from "../../common/helper/email-nodemailer.service";
+var { convertXMLToJson } = require('@zencloudservices/xmlparser');
 
 @Injectable()
 export class SupportService {
@@ -19,8 +21,32 @@ export class SupportService {
     private readonly supportTicketDbService: SupportTicketDbService,
     private readonly userprofileDbService: UserprofileDbService,
     private readonly supportClarificationDbService: SupportClarificationDbService,
-    private readonly clockLogDbService: ClockLogDbService
+    private readonly clockLogDbService: ClockLogDbService,
+    private readonly emailNodemailerService: EmailNodemailerService,
+    private readonly roleProfileDbService: RoleProfileDbService
   ) { }
+
+  public getAdminList([tenantId]: [string]) {
+    return this.roleProfileDbService.findByFilterV4([[], [`(TENANT_GUID = ${tenantId})`], null, null, null, [], null]).pipe(
+      mergeMap(res => {
+        let roleAccepted = [];
+        res.forEach(element => {
+          let roleData = convertXMLToJson(element.PROPERTIES_XML);
+          let profileAdmin = roleData.property.allowProfileManagement.allowProfileAdmin;
+          if (profileAdmin.value == true && profileAdmin.level == 'All') {
+            roleAccepted.push(element.ROLE_GUID);
+          }
+        });
+
+        return this.userprofileDbService.findByFilterV4([[], [`(ROLE_GUID IN (${roleAccepted}))`], null, null, null, [], null]).pipe(
+          map(res => {
+            let emailToNotify = [...new Set(res.map(item => item.EMAIL))];
+            return emailToNotify;
+          })
+        )
+      })
+    );
+  }
 
   public getClarificationList([supportId]: [string]) {
     return this.userprofileDbService.findByFilterV4([['USER_GUID', 'FULLNAME', 'PROFILE_PICTURE', 'EMAIL'], [], null, null, null, [], null]).pipe(
@@ -108,7 +134,24 @@ export class SupportService {
 
     const resource = new Resource(new Array);
     resource.resource.push(dataSupport);
-    return this.supportTicketDbService.createByModel([resource, [], [], []]);
+    return this.supportTicketDbService.createByModel([resource, [], [], []]).pipe(
+      map(res => {
+        this.setupEmail([createSupportDto, user.TENANT_GUID]);
+        return res;
+      })
+    );
+  }
+  private setupEmail([createSupportDto, tenantId]: [CreateSupportDTO, string]) {
+
+    this.getAdminList([tenantId]).subscribe(
+      data => {
+        let [adminName, emailAdmin, emailUser, senderName] = [null, data, null, createSupportDto.userEmail]
+        this.emailNodemailerService.mailProcessRaiseRequest([adminName, emailAdmin, emailUser, senderName]);
+      },
+      err => { console.log(err); }
+    );
+
+    return 'success';
   }
 
   private addClockRequest([data]: [CreateAdminClarificationDTO]) {

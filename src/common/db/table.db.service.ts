@@ -267,6 +267,23 @@ export class UserinfoDbService extends BaseDBService {
 }
 
 @Injectable()
+export class RoleProfileDbService extends BaseDBService {
+  /**
+   * Declare table
+   *
+   * @memberof RoleProfileDbService
+   */
+  public tableDB = 'l_role_profile';
+  /**
+   *Creates an instance of RoleProfileDbService.
+   * @param {HttpService} httpService http service
+   * @param {QueryParserService} queryService query service
+   * @memberof UserDbService
+   */
+  constructor(public readonly httpService: HttpService, public readonly queryService: QueryParserService) { super(httpService, queryService, "l_role_profile") }
+}
+
+@Injectable()
 export class AttendanceUploadLogDbService extends BaseDBService {
   /**
    * Declare table
