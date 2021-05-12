@@ -398,7 +398,7 @@ export class ReportService {
 
                 dataAttndnce.address_out = attndnceData.ADDRESS_OUT;
                 dataAttndnce.source = attndnceData.SOURCE_ID == 1 ? 'System' : attndnceData.SOURCE_ID == 2 ? 'Raise request' : attndnceData.SOURCE_ID == 3 ? 'Imported' : null;
-
+                dataAttndnce.key_time = attndnceData.KEY_TIME;
                 let clockout = moment(dataAttndnce.clock_out_time, 'YYYY-MM-DD HH:mm:ss');
                 let clockin = moment(dataAttndnce.clock_in_time, 'YYYY-MM-DD HH:mm:ss');
                 let duration = moment.duration(clockout.diff(clockin));
@@ -439,11 +439,18 @@ export class ReportService {
                 arrTemp['problem'] = leavetypeInfo != undefined ? leavetypeInfo.CODE + (leaveTaken.TIME_SLOT ? ' - ' + leaveTaken.TIME_SLOT : '') : 'Birthday Leave';
               }
 
+              // resultArray.sort(function (a, b) {
+              //   var c = new Date(a.clock_in_time) as any;
+              //   var d = new Date(b.clock_in_time) as any;
+              //   // return c - d;
+              //   return d - c;
+              // });
+
               resultArray.sort(function (a, b) {
-                var c = new Date(a.clock_in_time) as any;
-                var d = new Date(b.clock_in_time) as any;
+                var c = new Date(a.key_time) as any;
+                var d = new Date(b.key_time) as any;
                 // return c - d;
-                return d - c;
+                return c - d;
               });
 
               if (resultArray.length == 0) {
@@ -458,6 +465,7 @@ export class ReportService {
                 dataAttndnce.address_out = null;
                 dataAttndnce.source = null;
                 dataAttndnce.hours = null;
+                dataAttndnce.key_time = null;
 
                 resultArray.push(dataAttndnce);
               }

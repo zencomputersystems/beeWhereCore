@@ -19,6 +19,7 @@ export class AttendanceDetailsDTO {
   total_hrs: string;// 1
   source: string;
   problem: string;
+  key_time: string;
 }
 
 export class ResultUserDTO {
