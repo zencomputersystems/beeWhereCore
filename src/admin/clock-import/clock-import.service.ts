@@ -63,7 +63,7 @@ export class ClockImportService {
   public importCsvProcessUpload([data, user, attendanceId]) {
     return this.userprofileDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`, `AND (DELETED_AT IS NULL)`], null, null, null, [], null]).pipe(
       mergeMap(res => {
-        let existData = this.clockImportLogDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`], null, null, null, [], null]);
+        let existData = this.clockImportLogDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`, 'AND DATE(CREATION_TS) > (DATE_SUB(curdate(), INTERVAL 1 MONTH))'], null, null, null, [], null]);
         return forkJoin([of(res), existData]);
       }),
       mergeMap(res => {
