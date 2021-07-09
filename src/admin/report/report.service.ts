@@ -373,7 +373,8 @@ export class ReportService {
               let clockout = moment(latest, 'YYYY-MM-DD HH:mm:ss');
               let clockin = moment(earliest, 'YYYY-MM-DD HH:mm:ss');
               let duration = moment.duration(clockout.diff(clockin));
-              let period = moment.utc(duration.asMilliseconds()).format('HH:mm');
+              // let period = moment.utc(duration.asMilliseconds()).format('HH:mm');
+              let period = Math.floor(duration.asHours()) + ':' + moment.utc(duration.asMilliseconds()).format('mm');
 
               let periodTemp = moment(period, 'HH:mm');
               let durationPerDayTemp = moment(durationPerDay, 'H');
@@ -402,9 +403,12 @@ export class ReportService {
                 let clockout = moment(dataAttndnce.clock_out_time, 'YYYY-MM-DD HH:mm:ss');
                 let clockin = moment(dataAttndnce.clock_in_time, 'YYYY-MM-DD HH:mm:ss');
                 let duration = moment.duration(clockout.diff(clockin));
-                let period = moment.utc(duration.asMilliseconds()).format('HH:mm');
 
-                dataAttndnce.hours = period != 'Invalid date' ? period : null;
+                let period = Math.floor(duration.asHours()) + ':' + moment.utc(duration.asMilliseconds()).format('mm');
+
+                // let period = moment.utc(duration.asMilliseconds()).format('HH:mm');
+
+                dataAttndnce.hours = (period != 'Invalid date' && period != 'NaN:Invalid date') ? period : null;
 
                 resultArray.push(dataAttndnce);
 
@@ -412,7 +416,7 @@ export class ReportService {
 
               let arrTemp = {};
               arrTemp['date'] = startdate;
-              arrTemp['total_hours'] = period != 'Invalid date' ? period : null;
+              arrTemp['total_hours'] = (period != 'Invalid date' && period != 'NaN:Invalid date') ? period : null;
               // console.log(byDate);
               if (byDate.length == 0) {
                 arrTemp['problem'] = 'Absent';
