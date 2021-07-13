@@ -348,7 +348,8 @@ export class ReportService {
 
               // find leave taken by current looping user
               // let leaveTaken = leaveList.find(x => (x.USER_GUID === userguid && x.START_DATE === startdate));
-              let leaveTaken = leaveList.find(x => (x.USER_GUID === userguid && (moment(startdate, 'YYYY-MM-DD').isBetween(x.START_DATE, x.END_DATE) || moment(startdate, 'YYYY-MM-DD').isSame(x.START_DATE) || moment(startdate, 'YYYY-MM-DD').isSame(x.END_DATE))));
+              let leaveTaken = leaveList.filter(x => (x.USER_GUID === userguid && (moment(startdate, 'YYYY-MM-DD').isBetween(x.START_DATE, x.END_DATE) || moment(startdate, 'YYYY-MM-DD').isSame(x.START_DATE) || moment(startdate, 'YYYY-MM-DD').isSame(x.END_DATE))));
+
 
               let restday = restDay.includes(moment(startdate).format('dddd').toUpperCase()) ? 1 : 0;
               // console.log(restday);
@@ -437,10 +438,26 @@ export class ReportService {
               }
 
               if (leaveTaken != undefined) {
-                let leavetypeInfo = leavetypeList.find(x => x.LEAVE_TYPE_GUID === leaveTaken.LEAVE_TYPE_GUID);
+                // console.log(leaveTaken);
+                let leaveAssigned = '';
+                leaveTaken.forEach(element => {
+                  let leavetypeTemp = leavetypeList.find(x => x.LEAVE_TYPE_GUID === element.LEAVE_TYPE_GUID);
+                  if (leaveAssigned == '')
+                    leaveAssigned = leavetypeTemp.CODE + (element.TIME_SLOT ? ' - ' + element.TIME_SLOT : '');
+                  else
+                    leaveAssigned = leaveAssigned + ' , ' + leavetypeTemp.CODE + (element.TIME_SLOT ? ' - ' + element.TIME_SLOT : '');
+
+                });
+
+                // console.log(leaveAssigned);
+
+                // let leavetypeInfo = leavetypeList.find(x => x.LEAVE_TYPE_GUID === leaveTaken.LEAVE_TYPE_GUID);
 
                 // arrTemp['problem'] = leavetypeInfo != undefined ? leavetypeInfo.CODE : 'Birthday Leave';
-                arrTemp['problem'] = leavetypeInfo != undefined ? leavetypeInfo.CODE + (leaveTaken.TIME_SLOT ? ' - ' + leaveTaken.TIME_SLOT : '') : 'Birthday Leave';
+                // arrTemp['problem'] = leavetypeInfo != undefined ? leavetypeInfo.CODE + (leaveTaken.TIME_SLOT ? ' - ' + leaveTaken.TIME_SLOT : '') : 'Birthday Leave';
+
+                arrTemp['problem'] = leaveTaken != undefined ? leaveAssigned : 'Birthday Leave';
+
               }
 
               // resultArray.sort(function (a, b) {
