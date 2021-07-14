@@ -65,10 +65,11 @@ export class ClockImportService {
     data.forEach(element => {
       if (dateMin == null) { dateMin = element.Att_Time; } else if (dateMin > element.Att_Time) { dateMin = element.Att_Time; }
     });
+    let dt = moment(dateMin).subtract(1, 'days').format('YYYY-MM-DD');
 
     return this.userprofileDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`, `AND (DELETED_AT IS NULL)`], null, null, null, [], null]).pipe(
       mergeMap(res => {
-        let existData = this.clockImportLogDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`, 'AND (CREATION_TS > ' + dateMin + ')'], null, null, null, [], null]);
+        let existData = this.clockImportLogDbService.findByFilterV4([[], [`(TENANT_GUID=${user.TENANT_GUID})`, 'AND (CREATION_TS >= ' + dt + ')'], null, null, null, [], null]);
         return forkJoin([of(res), existData]);
       }),
       mergeMap(res => {
@@ -76,7 +77,6 @@ export class ClockImportService {
         let resource = new Resource(new Array);
         let failedList = [];
         let successList = [];
-        // console.log(existData);
         data.forEach(element => {
           let userData = resultUser.find(x => x.STAFF_ID === element.UserID)
 
