@@ -437,7 +437,7 @@ export class ReportService {
                 arrTemp['problem'] = publicHoliday.holidayName;
               }
 
-              if (leaveTaken != undefined) {
+              if (leaveTaken.length > 0) {
                 // console.log(leaveTaken);
                 let leaveAssigned = '';
                 leaveTaken.forEach(element => {
@@ -456,7 +456,7 @@ export class ReportService {
                 // arrTemp['problem'] = leavetypeInfo != undefined ? leavetypeInfo.CODE : 'Birthday Leave';
                 // arrTemp['problem'] = leavetypeInfo != undefined ? leavetypeInfo.CODE + (leaveTaken.TIME_SLOT ? ' - ' + leaveTaken.TIME_SLOT : '') : 'Birthday Leave';
 
-                arrTemp['problem'] = leaveTaken != undefined ? leaveAssigned : 'Birthday Leave';
+                arrTemp['problem'] = leaveTaken.length > 0 ? leaveAssigned : 'Birthday Leave';
 
               }
 
