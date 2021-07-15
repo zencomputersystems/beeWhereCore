@@ -382,6 +382,9 @@ export class ReportService {
               let timeDiff = moment.duration(periodTemp.diff(durationPerDayTemp)).minutes();
 
               let resultArray = [];
+              let dateMin = null;
+              let dateMax = null;
+
               byDate.forEach(attndnceData => {
 
                 let dataAttndnce = new AttendanceDetailsDTO;
@@ -411,12 +414,16 @@ export class ReportService {
 
                 dataAttndnce.hours = (period != 'Invalid date' && period != 'NaN:Invalid date') ? period : null;
 
+                if (dateMin == null) { dateMin = attndnceData.CLOCK_IN_TIME; } else if (dateMin > attndnceData.CLOCK_IN_TIME) { dateMin = attndnceData.CLOCK_IN_TIME; }
+                if (dateMax == null) { dateMax = attndnceData.CLOCK_OUT_TIME; } else if (attndnceData.CLOCK_OUT_TIME != null && dateMax < attndnceData.CLOCK_OUT_TIME) { dateMax = attndnceData.CLOCK_OUT_TIME; }
                 resultArray.push(dataAttndnce);
 
               });
 
               let arrTemp = {};
               arrTemp['date'] = startdate;
+              arrTemp['first_clock_in'] = dateMin != null ? moment(dateMin).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;
+              arrTemp['last_clock_out'] = dateMax != null ? moment(dateMax).add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') : null;;
               arrTemp['total_hours'] = (period != 'Invalid date' && period != 'NaN:Invalid date') ? period : null;
               // console.log(byDate);
               if (byDate.length == 0) {
